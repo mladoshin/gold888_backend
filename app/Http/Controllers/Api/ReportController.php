@@ -10,7 +10,8 @@ class ReportController extends Controller
 {
     public function index()
     {
-        $reports = Report::latest()->paginate(10);
+        $reports = Report::latest()->withSum('consumptions', 'sum')->paginate(100);
+
         return response()->json([
             'success' => true,
             'data' => $reports
