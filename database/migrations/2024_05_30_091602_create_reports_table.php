@@ -9,6 +9,7 @@ return new class extends Migration {
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
+            $table->integer('branch_id')->nullable();
             $table->string('start_shift')->nullable();
             $table->string('refreshment')->nullable();
             $table->string('deposit')->nullable();

@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\ReportController;
+use App\Http\Controllers\Api\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,3 +24,5 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::apiResource('reports',ReportController::class);
 });
 Route::post('auth/login', [AuthController::class, 'login']);
+
+Route::get('test', [ReportController::class, 'test']);

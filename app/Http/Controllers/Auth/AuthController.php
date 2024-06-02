@@ -19,12 +19,20 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (!$user) {
             return response()->json([
                 'success' => false,
-                'data' => ['error' => 'The provided credentials are incorrect.']
+                'data' => ['error' =>'email', 'message' => 'Такого аккаунт не существует']
             ]);
         }
+
+        if (!Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'data' => ['error' =>'password', 'message' => 'Неправильный пароль']
+            ]);
+        }
+
 
         return response()->json(['success' => true, 'data' => ['token' => $user->createToken('Laravel')->plainTextToken]]);
     }

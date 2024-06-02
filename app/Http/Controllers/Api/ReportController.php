@@ -2,19 +2,59 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Filters\ReportFilter;
+use App\Helpers\PaginateCollection;
 use App\Http\Requests\StoreReportRequest;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 class ReportController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $reports = Report::latest()->withSum('consumptions', 'sum')->paginate(100);
+        $key = $request->key;
+        $reports = Report::query()
+            ->latest()
+            ->withSum('consumptions', 'sum')
+            ->when($key, function ($q) use ($key){
+                $q->where('own_capital', 'like', '%'.$key.'%')
+                    ->orWhere('equity', 'like', '%'.$key.'%')
+                    ->orWhere('income_goods', 'like', '%'.$key.'%');
+            })
+            ->get();
+
+
+        $reports = (new ReportFilter())->handle($reports, $request->only('own_capital', 'equity', 'consumptions_sum_sum', 'netProfit', 'income_goods', 'created_at'));
+
+        $paginatedData = (new PaginateCollection())->handle($reports, $request->page);
 
         return response()->json([
             'success' => true,
-            'data' => $reports
+            'data' => $paginatedData
+        ]);
+    }
+
+    public function test(Request $request)
+    {
+        $key = $request->key;
+        $reports = Report::query()
+            ->latest()
+            ->withSum('consumptions', 'sum')
+            ->when($key, function ($q) use ($key){
+                $q->where('own_capital', 'like', '%'.$key.'%')
+                    ->orWhere('equity', 'like', '%'.$key.'%')
+                    ->orWhere('income_goods', 'like', '%'.$key.'%');
+            })
+            ->get();
+
+
+        $reports = (new ReportFilter())->handle($reports, $request->only('own_capital', 'equity', 'consumptions_sum_sum', 'netProfit', 'income_goods', 'created_at'));
+
+        $paginatedData = (new PaginateCollection())->handle($reports, $request->page);
+
+        return response()->json([
+            'success' => true,
+            'data' => $paginatedData
         ]);
     }
 

@@ -32,6 +32,7 @@ class Report extends Model
         'report_type',
     ];
 
+    protected $appends = ['net_profit'];
     public function consumptions(): HasMany
     {
         return $this->hasMany(Consumption::class);
@@ -40,5 +41,10 @@ class Report extends Model
     public function getProfitAttribute()
     {
         return $this->attributes['interest_income'] + $this->attributes['income_goods'];
+    }
+
+    public function getNetProfitAttribute()
+    {
+        return $this->attributes['interest_income'] + $this->attributes['income_goods'] - $this->consumptions->sum('sum');
     }
 }
