@@ -30,7 +30,26 @@ return new class extends Migration {
             $table->string('pledge_tickets')->nullable();
             $table->string('borrowed_capital')->nullable();
             $table->string('own_capital')->nullable();
-            $table->string('report_type')->nullable();
+            $table->string('smart_start_shift')->nullable();
+            $table->string('smart_refreshment')->nullable();
+            $table->string('smart_deposit')->nullable();
+            $table->string('smart_renewal')->nullable();
+            $table->string('smart_partial_redemption')->nullable();
+            $table->string('smart_interest_income')->nullable();
+            $table->string('smart_return_goods')->nullable();
+            $table->string('smart_deposit_tickets')->nullable();
+            $table->string('smart_investor_capital')->nullable();
+            $table->string('smart_equity')->nullable();
+            $table->string('smart_fixed_flow')->nullable();
+            $table->string('smart_collection')->nullable();
+            $table->string('smart_ransom')->nullable();
+            $table->string('smart_withdraw_pledges')->nullable();
+            $table->string('smart_selling_goods')->nullable();
+            $table->string('smart_income_goods')->nullable();
+            $table->string('smart_used_goods')->nullable();
+            $table->string('smart_pledge_tickets')->nullable();
+            $table->string('smart_borrowed_capital')->nullable();
+            $table->string('smart_own_capital')->nullable();
             $table->timestamps();
         });
     }

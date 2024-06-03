@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Filters\ReportFilter;
 use App\Helpers\PaginateCollection;
 use App\Http\Requests\StoreReportRequest;
+use App\Http\Resources\ReportTableResource;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+
 class ReportController extends Controller
 {
     public function index(Request $request)
@@ -21,41 +23,13 @@ class ReportController extends Controller
                     ->orWhere('equity', 'like', '%'.$key.'%')
                     ->orWhere('income_goods', 'like', '%'.$key.'%');
             })
-            ->get();
-
-
-        $reports = (new ReportFilter())->handle($reports, $request->only('own_capital', 'equity', 'consumptions_sum_sum', 'netProfit', 'income_goods', 'created_at'));
-
-        $paginatedData = (new PaginateCollection())->handle($reports, $request->page);
-
-        return response()->json([
-            'success' => true,
-            'data' => $paginatedData
-        ]);
-    }
-
-    public function test(Request $request)
-    {
-        $key = $request->key;
-        $reports = Report::query()
-            ->latest()
-            ->withSum('consumptions', 'sum')
-            ->when($key, function ($q) use ($key){
-                $q->where('own_capital', 'like', '%'.$key.'%')
-                    ->orWhere('equity', 'like', '%'.$key.'%')
-                    ->orWhere('income_goods', 'like', '%'.$key.'%');
-            })
-            ->get();
-
+        ->get();
 
         $reports = (new ReportFilter())->handle($reports, $request->only('own_capital', 'equity', 'consumptions_sum_sum', 'netProfit', 'income_goods', 'created_at'));
 
         $paginatedData = (new PaginateCollection())->handle($reports, $request->page);
 
-        return response()->json([
-            'success' => true,
-            'data' => $paginatedData
-        ]);
+        return ReportTableResource::collection($reports);
     }
 
     public function store(StoreReportRequest $request)
@@ -63,7 +37,8 @@ class ReportController extends Controller
         \DB::beginTransaction();
         try {
             $report = Report::create($request->validated());
-            $report->consumptions()->createMany($request->consumptions);
+            $report->consumptions()->createMany($request->smart_consumptions ?? []);
+            $report->consumptions()->createMany($request->express_consumptions ?? []);
             \DB::commit();
             return response()->json([
                 'success' => true,

@@ -11,5 +11,8 @@ class Consumption extends Model
         'sum',
         'description',
         'type',
+        'report_type',
     ];
+
+    protected $attributes = ['report_type' => 'express'];
 }

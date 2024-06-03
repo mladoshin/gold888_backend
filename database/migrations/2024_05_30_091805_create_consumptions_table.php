@@ -13,6 +13,7 @@ return new class extends Migration {
             $table->string('sum');
             $table->text('description')->nullable();
             $table->string('type');
+            $table->string('report_type');
             $table->timestamps();
         });
     }
