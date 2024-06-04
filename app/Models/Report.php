@@ -57,6 +57,11 @@ class Report extends Model
         return $this->hasMany(Consumption::class);
     }
 
+    public function smartConsumptions()
+    {
+
+    }
+
     public function getProfitAttribute()
     {
         return $this->attributes['interest_income'] + $this->attributes['income_goods'];
@@ -64,6 +69,6 @@ class Report extends Model
 
     public function getNetProfitAttribute()
     {
-        return $this->attributes['interest_income'] + $this->attributes['income_goods'] - $this->consumptions->sum('sum');
+        return $this->attributes['interest_income'] + $this->attributes['income_goods'] + $this->attributes['smart_interest_income'] + $this->attributes['smart_income_goods'] - $this->consumptions->sum('sum');
     }
 }
