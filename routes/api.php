@@ -21,6 +21,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::middleware('auth:sanctum')->group(function (){
+    Route::get('check-auth',function (){
+        return true;
+    });
     Route::apiResource('reports',ReportController::class);
 });
 Route::post('auth/login', [AuthController::class, 'login']);

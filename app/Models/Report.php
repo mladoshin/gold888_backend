@@ -51,20 +51,25 @@ class Report extends Model
         'smart_own_capital',
     ];
 
-    protected $appends = ['net_profit'];
+    protected $appends = ['net_profit', 'sum_equity', 'sum_own_capital', 'sum_interest_income'];
     public function consumptions(): HasMany
     {
         return $this->hasMany(Consumption::class);
     }
 
-    public function smartConsumptions()
+    public function getSumEquityAttribute()
     {
-
+        return $this->attributes['equity'] + $this->attributes['smart_equity'];
     }
 
-    public function getProfitAttribute()
+    public function getSumOwnCapitalAttribute()
     {
-        return $this->attributes['interest_income'] + $this->attributes['income_goods'];
+        return $this->attributes['own_capital'] + $this->attributes['smart_own_capital'];
+    }
+
+    public function getSumInterestIncomeAttribute()
+    {
+        return $this->attributes['interest_income'] + $this->attributes['smart_interest_income'];
     }
 
     public function getNetProfitAttribute()

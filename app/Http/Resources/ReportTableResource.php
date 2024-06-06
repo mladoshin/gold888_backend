@@ -17,7 +17,8 @@ class ReportTableResource extends JsonResource
             'own_capital' => $this->own_capital + $this->smart_own_capital,
             'consumptions_sum_sum' => $this->consumptions_sum_sum,
             'net_profit' => $this->net_profit,
-            'prodano' => $this->income_goods,
+            'prodano' => $this->income_goods + $this->smart_income_goods,
+            'links' => $this->links
         ];
     }
 

@@ -8,13 +8,13 @@ class ReportFilter
     {
         if (isset($params['own_capital'])){
             $items = $items->filter(function ($item) use ($params) {
-                return $item['own_capital'] <= $params['own_capital'];
+                return $item['sum_own_capital'] <= $params['own_capital'];
             });
         }
 
         if (isset($params['equity'])){
             $items = $items->filter(function ($item) use ($params) {
-                return $item['equity'] <= $params['equity'];
+                return $item['sum_equity'] <= $params['equity'];
             });
         }
 
@@ -32,7 +32,7 @@ class ReportFilter
 
         if (isset($params['income_goods'])){
             $items = $items->filter(function ($item) use ($params) {
-                return $item['income_goods'] <= $params['income_goods'];
+                return $item['sum_income_goods'] <= $params['income_goods'];
             });
         }
 
