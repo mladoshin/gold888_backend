@@ -26,7 +26,7 @@ class ReportController extends Controller
             })
         ->get();
 
-        $reports = (new ReportFilter())->handle($reports, $request->only('own_capital', 'equity', 'consumptions_sum_sum', 'netProfit', 'income_goods', 'created_at'));
+        $reports = (new ReportFilter())->handle($reports, $request->only('sum_own_capital', 'sum_equity', 'consumptions_sum_sum', 'net_profit', 'sum_income_goods', 'created_at'));
 
         $paginatedData = (new PaginateCollection())->handle($reports, $request->page);
         return response()->json($paginatedData);

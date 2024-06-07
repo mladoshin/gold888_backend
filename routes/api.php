@@ -22,7 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::middleware('auth:sanctum')->group(function (){
     Route::get('check-auth',function (){
-        return true;
+        return response()->json(['success' => true, 'data' => true]);
     });
     Route::apiResource('reports',ReportController::class);
 });

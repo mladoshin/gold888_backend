@@ -6,15 +6,15 @@ class ReportFilter
 {
     public function handle($items, $params)
     {
-        if (isset($params['own_capital'])){
+        if (isset($params['sum_own_capital'])){
             $items = $items->filter(function ($item) use ($params) {
-                return $item['sum_own_capital'] <= $params['own_capital'];
+                return $item['sum_own_capital'] <= $params['sum_own_capital'];
             });
         }
 
-        if (isset($params['equity'])){
+        if (isset($params['sum_equity'])){
             $items = $items->filter(function ($item) use ($params) {
-                return $item['sum_equity'] <= $params['equity'];
+                return $item['sum_equity'] <= $params['sum_equity'];
             });
         }
 
@@ -24,21 +24,21 @@ class ReportFilter
             });
         }
 
-        if (isset($params['netProfit'])){
+        if (isset($params['net_profit'])){
             $items = $items->filter(function ($item) use ($params) {
-                return $item['netProfit'] <= $params['netProfit'];
+                return $item['net_profit'] <= $params['net_profit'];
             });
         }
 
-        if (isset($params['income_goods'])){
+        if (isset($params['sum_income_goods'])){
             $items = $items->filter(function ($item) use ($params) {
-                return $item['sum_income_goods'] <= $params['income_goods'];
+                return $item['sum_income_goods'] <= $params['sum_income_goods'];
             });
         }
 
         if (isset($params['created_at'])){
             $items = $items->filter(function ($item) use ($params) {
-                return $item['created_at'] <= $params['created_at'];
+                return date('Y-m-d', strtotime($item['created_at'])) <= $params['created_at'];
             });
         }
 

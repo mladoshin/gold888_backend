@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -24,7 +25,7 @@ class Report extends Model
         'ransom',
         'withdraw_pledges',
         'selling_goods',
-        'income_goods', // доход за товары
+        'income_goods', // доход за товары // продано в товарах
         'used_goods',
         'pledge_tickets',
         'borrowed_capital',
@@ -51,7 +52,11 @@ class Report extends Model
         'smart_own_capital',
     ];
 
-    protected $appends = ['net_profit', 'sum_equity', 'sum_own_capital', 'sum_interest_income'];
+    protected $appends = ['net_profit', 'sum_equity', 'sum_own_capital', 'sum_income_goods'];
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d');
+    }
     public function consumptions(): HasMany
     {
         return $this->hasMany(Consumption::class);
@@ -67,9 +72,9 @@ class Report extends Model
         return $this->attributes['own_capital'] + $this->attributes['smart_own_capital'];
     }
 
-    public function getSumInterestIncomeAttribute()
+    public function getSumIncomeGoodsAttribute()
     {
-        return $this->attributes['interest_income'] + $this->attributes['smart_interest_income'];
+        return $this->attributes['income_goods'] + $this->attributes['smart_income_goods'];
     }
 
     public function getNetProfitAttribute()
