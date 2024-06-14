@@ -25,6 +25,7 @@ Route::middleware('auth:sanctum')->group(function (){
         return response()->json(['success' => true, 'data' => true]);
     });
     Route::apiResource('reports',ReportController::class);
+    Route::get('reports/last',[ReportController::class, 'getLastReport']);
 });
 Route::post('auth/login', [AuthController::class, 'login']);
 

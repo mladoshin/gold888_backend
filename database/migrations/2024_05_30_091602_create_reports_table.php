@@ -11,6 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->integer('branch_id')->nullable();
             $table->string('start_shift')->nullable();
+            $table->string('end_shift')->nullable();
             $table->string('refreshment')->nullable();
             $table->string('deposit')->nullable();
             $table->string('renewal')->nullable();
@@ -50,6 +51,8 @@ return new class extends Migration {
             $table->string('smart_pledge_tickets')->nullable();
             $table->string('smart_borrowed_capital')->nullable();
             $table->string('smart_own_capital')->nullable();
+            $table->string('smart_end_shift')->nullable();
+            $table->string('smart_buying_up')->nullable();
             $table->timestamps();
         });
     }

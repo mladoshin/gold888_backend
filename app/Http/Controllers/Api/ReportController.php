@@ -73,4 +73,13 @@ class ReportController extends Controller
     public function destroy(Report $report)
     {
     }
+
+    public function getLastReport()
+    {
+        $item = Report::select('id', 'end_shift', 'smart_end_shift')->latest()->first();
+        return response()->json([
+            'success' => true,
+            'data' => $item
+        ]);
+    }
 }
