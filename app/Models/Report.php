@@ -31,6 +31,9 @@ class Report extends Model
         'pledge_tickets', //Залоговые билеты/готов к продаже
         'borrowed_capital', //Заёмный капитал кредит
         'own_capital', //  Собственный капитал в товарах
+        'refreshment_text',
+        'collection_text',
+
         'smart_start_shift',
         'smart_end_shift',
         'smart_refreshment',
@@ -53,9 +56,11 @@ class Report extends Model
         'smart_borrowed_capital',
         'smart_own_capital',
         'smart_buying_up', // скупка
+        'smart_collection_text',
+        'smart_refreshment_text'
     ];
 
-    protected $appends = ['net_profit', 'sum_equity', 'sum_own_capital', 'sum_income_goods'];
+    protected $appends = ['net_profit', 'sum_equity', 'sum_own_capital', 'sum_income_goods', 'sum_start_shift', 'sum_end_shift', 'sum_deposit_tickets'];
     public function getCreatedAtAttribute($value)
     {
         return Carbon::parse($value)->format('Y-m-d');
@@ -75,9 +80,24 @@ class Report extends Model
         return $this->attributes['own_capital'] + $this->attributes['smart_own_capital'];
     }
 
+    public function getSumStartShiftAttribute()
+    {
+        return $this->attributes['start_shift'] + $this->attributes['smart_start_shift'];
+    }
+
+    public function getSumEndShiftAttribute()
+    {
+        return $this->attributes['end_shift'] + $this->attributes['smart_end_shift'];
+    }
+
     public function getSumIncomeGoodsAttribute()
     {
         return $this->attributes['income_goods'] + $this->attributes['smart_income_goods'];
+    }
+
+    public function getSumDepositTicketsAttribute()
+    {
+        return $this->attributes['deposit_tickets'] + $this->attributes['smart_deposit_tickets'];
     }
 
     public function getNetProfitAttribute()

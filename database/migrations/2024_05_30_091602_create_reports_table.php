@@ -13,6 +13,7 @@ return new class extends Migration {
             $table->string('start_shift')->nullable();
             $table->string('end_shift')->nullable();
             $table->string('refreshment')->nullable();
+            $table->mediumText('refreshment_text')->nullable();
             $table->string('deposit')->nullable();
             $table->string('renewal')->nullable();
             $table->string('partial_redemption')->nullable();
@@ -23,6 +24,7 @@ return new class extends Migration {
             $table->string('equity')->nullable();
             $table->string('fixed_flow')->nullable();
             $table->string('collection')->nullable();
+            $table->mediumText('collection_text')->nullable();
             $table->string('ransom')->nullable();
             $table->string('withdraw_pledges')->nullable();
             $table->string('selling_goods')->nullable();
@@ -33,6 +35,7 @@ return new class extends Migration {
             $table->string('own_capital')->nullable();
             $table->string('smart_start_shift')->nullable();
             $table->string('smart_refreshment')->nullable();
+            $table->mediumText('smart_refreshment_text')->nullable();
             $table->string('smart_deposit')->nullable();
             $table->string('smart_renewal')->nullable();
             $table->string('smart_partial_redemption')->nullable();
@@ -43,6 +46,7 @@ return new class extends Migration {
             $table->string('smart_equity')->nullable();
             $table->string('smart_fixed_flow')->nullable();
             $table->string('smart_collection')->nullable();
+            $table->mediumText('smart_collection_text')->nullable();
             $table->string('smart_ransom')->nullable();
             $table->string('smart_withdraw_pledges')->nullable();
             $table->string('smart_selling_goods')->nullable();

@@ -6,6 +6,18 @@ class ReportFilter
 {
     public function handle($items, $params)
     {
+        if (isset($params['sum_start_shift'])){
+            $items = $items->filter(function ($item) use ($params) {
+                return $item['sum_start_shift'] <= $params['sum_start_shift'];
+            });
+        }
+
+        if (isset($params['sum_end_shift'])){
+            $items = $items->filter(function ($item) use ($params) {
+                return $item['sum_end_shift'] <= $params['sum_end_shift'];
+            });
+        }
+
         if (isset($params['sum_own_capital'])){
             $items = $items->filter(function ($item) use ($params) {
                 return $item['sum_own_capital'] <= $params['sum_own_capital'];

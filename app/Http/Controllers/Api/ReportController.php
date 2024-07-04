@@ -9,6 +9,7 @@ use App\Http\Resources\ReportTableResource;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
@@ -16,7 +17,7 @@ class ReportController extends Controller
     {
         $key = $request->key;
         $reports = Report::query()
-            ->select('id', 'income_goods', 'smart_income_goods', 'own_capital', 'smart_own_capital', 'equity', 'smart_equity', 'interest_income', 'smart_interest_income', 'created_at')
+            ->select('id', 'income_goods', 'smart_income_goods', 'own_capital', 'smart_own_capital', 'equity', 'smart_equity', 'interest_income', 'smart_interest_income', 'created_at', 'start_shift', 'smart_start_shift', 'end_shift', 'smart_end_shift', 'deposit_tickets', 'smart_deposit_tickets')
             ->latest()
             ->withSum('consumptions', 'sum')
             ->when($key, function ($q) use ($key){
@@ -26,11 +27,9 @@ class ReportController extends Controller
             })
         ->get();
 
-        $reports = (new ReportFilter())->handle($reports, $request->only('sum_own_capital', 'sum_equity', 'consumptions_sum_sum', 'net_profit', 'sum_income_goods', 'created_at'));
-
+        $reports = (new ReportFilter())->handle($reports, $request->only('sum_start_shift', 'sum_end_shift', 'sum_own_capital', 'sum_equity', 'consumptions_sum_sum', 'net_profit', 'sum_income_goods', 'created_at'));
         $paginatedData = (new PaginateCollection())->handle($reports, $request->page);
         return response()->json($paginatedData);
-        //return ReportTableResource::collection($reports);
     }
 
     public function store(StoreReportRequest $request)
@@ -76,7 +75,12 @@ class ReportController extends Controller
 
     public function getLastReport()
     {
-        $item = Report::select('id', 'end_shift', 'smart_end_shift')->latest()->first();
+        $item = DB::table('reports')->select('id', 'end_shift', 'smart_end_shift')->latest()->first();
+        if (!$item)
+            return response()->json([
+                'success' => false,
+                'data' => 'item not found'
+            ]);
         return response()->json([
             'success' => true,
             'data' => $item
