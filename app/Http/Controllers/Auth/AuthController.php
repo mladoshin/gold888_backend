@@ -36,4 +36,10 @@ class AuthController extends Controller
 
         return response()->json(['success' => true, 'data' => ['token' => $user->createToken('Laravel')->plainTextToken]]);
     }
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+        return response()->json(['success' => true, 'data' =>[]]);
+    }
 }
