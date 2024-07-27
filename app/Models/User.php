@@ -22,8 +22,12 @@ class User extends Authenticatable
         'region_id',
         'branch_id',
         'name',
+        'surname',
         'email',
         'password',
+        'phone',
+        'image',
+        'role',
     ];
 
     /**
@@ -44,6 +48,20 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public static function roles() :array
+    {
+        return [
+            'admin' => 'Админстратор',
+            'region_director' => 'Регионалный директор',
+            'branch_director' => 'Директор филиала',
+        ];
+    }
+
+    public function getFullNameAttribute() :string
+    {
+        return $this->name . ' ' . $this->surname;
+    }
 
     public function region(): BelongsTo
     {

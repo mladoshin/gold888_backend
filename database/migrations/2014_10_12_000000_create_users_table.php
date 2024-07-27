@@ -16,9 +16,13 @@ return new class extends Migration
             $table->integer('region_id')->nullable();
             $table->integer('branch_id')->nullable();
             $table->string('name');
+            $table->string('surname')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('phone')->nullable();
+            $table->string('image')->nullable();
+            $table->string('role')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

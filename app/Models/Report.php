@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Report extends Model
 {
     protected $fillable = [
+        'region_id',
+        'branch_id',
+        'user_id',
         'start_shift', //Начало смены
         'end_shift', //конец смены
         'refreshment', //Подкрепление

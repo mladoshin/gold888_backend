@@ -16,7 +16,7 @@ class RegionController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate(['name' => 'required']);
+        $request->validate(['name' => 'required', 'user_id' => 'required']);
         $region = Region::create($request->all());
         return new RegionResource($region);
     }

@@ -13,6 +13,7 @@ class RegionResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'director' => $this->director->full_name,
         ];
     }
 }

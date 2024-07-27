@@ -10,7 +10,15 @@ return new class extends Migration {
         Schema::create('branches', function (Blueprint $table) {
             $table->id();
             $table->integer('region_id');
+            $table->unsignedBigInteger('user_id');
             $table->string('name');
+            $table->mediumText('address');
+            $table->string('kpi_day_plan')->nullable();
+            $table->string('kpi_month_plan')->nullable();
+            $table->string('kpi_year_plan')->nullable();
+            $table->string('kpi_day_fact')->nullable();
+            $table->string('kpi_month_fact')->nullable();
+            $table->string('kpi_year_fact')->nullable();
             $table->timestamps();
         });
     }
