@@ -12,8 +12,8 @@ class BranchResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'region_id' => $this->region_id,
-            'user_id' => $this->user_id,
+            'region' => $this->region->name,
+            'director' => $this->director->full_name,
             'name' => $this->name,
             'address' => $this->address,
             'kpi_day_plan' => $this->kpi_day_plan,
@@ -22,7 +22,6 @@ class BranchResource extends JsonResource
             'kpi_day_fact' => $this->kpi_day_fact,
             'kpi_month_fact' => $this->kpi_month_fact,
             'kpi_year_fact' => $this->kpi_year_fact,
-            'created_at' => $this->created_at,
         ];
     }
 }

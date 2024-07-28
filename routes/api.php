@@ -1,9 +1,10 @@
 <?php
 
+use App\Http\Controllers\Api\BranchController;
 use App\Http\Controllers\Api\RegionController;
+use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Api\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +27,7 @@ Route::middleware('auth:sanctum')->group(function (){
 
     Route::apiResource('regions',RegionController::class);
     Route::apiResource('users',UserController::class);
+    Route::apiResource('branches',BranchController::class);
 
 
     //reports

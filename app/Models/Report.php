@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Report extends Model
@@ -64,6 +65,22 @@ class Report extends Model
     ];
 
     protected $appends = ['net_profit', 'sum_equity', 'sum_own_capital', 'sum_income_goods', 'sum_start_shift', 'sum_end_shift', 'sum_deposit_tickets'];
+
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'region_id')->withDefault(['name' => 'this region deleted']);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id')->withDefault(['name' => 'this user deleted']);
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class, 'branch_id')->withDefault(['name' => 'this branch deleted']);
+    }
+
     public function getCreatedAtAttribute($value)
     {
         return Carbon::parse($value)->format('Y-m-d');

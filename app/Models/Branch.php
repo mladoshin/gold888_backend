@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Branch extends Model
 {
@@ -18,4 +19,14 @@ class Branch extends Model
         'kpi_month_fact',
         'kpi_year_fact',
     ];
+
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class)->withDefault(['name' => 'this region deleted']);
+    }
+
+    public function director(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id')->withDefault(['name' => 'this user deleted']);
+    }
 }
