@@ -46,9 +46,9 @@ class BranchController extends Controller
     {
         try {
             $branch->delete();
-            return $this->successResponse();
         }catch (\Exception $e){
             return $this->errorResponse($e->getMessage());
         }
+        return $this->successResponse();
     }
 }

@@ -16,8 +16,17 @@ class ReportController extends Controller
     public function index(Request $request)
     {
         $key = $request->key;
-        $reports = Report::query()
-            ->select('id', 'income_goods', 'smart_income_goods', 'own_capital', 'smart_own_capital', 'equity', 'smart_equity', 'interest_income', 'smart_interest_income', 'created_at', 'start_shift', 'smart_start_shift', 'end_shift', 'smart_end_shift', 'deposit_tickets', 'smart_deposit_tickets')
+        $reports = Report::query();
+        $userRole = $request->user()->role;
+        if ($userRole == 'user' || $userRole == 'branch_director'){
+            $reports->where('branch_id', $request->user()->branch_id);
+        }
+
+        if ($request->user()->role == 'region_director'){
+            $reports->where('region_id', $request->user()->region_id);
+        }
+
+        $reports = $reports->select('id', 'user_id', 'branch_id', 'region_id', 'income_goods', 'smart_income_goods', 'own_capital', 'smart_own_capital', 'equity', 'smart_equity', 'interest_income', 'smart_interest_income', 'created_at', 'start_shift', 'smart_start_shift', 'end_shift', 'smart_end_shift', 'deposit_tickets', 'smart_deposit_tickets')
             ->latest()
             ->withSum('consumptions', 'sum')
             ->when($key, function ($q) use ($key){
@@ -35,8 +44,9 @@ class ReportController extends Controller
     public function store(StoreReportRequest $request)
     {
         \DB::beginTransaction();
+        $data = $request->all();
         try {
-            $report = Report::create($request->all());
+            $report = Report::create($data);
             $report->consumptions()->createMany($request->smart_consumptions ?? []);
             $report->consumptions()->createMany($request->express_consumptions ?? []);
             \DB::commit();

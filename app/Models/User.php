@@ -71,11 +71,11 @@ class User extends Authenticatable
 
     public function region(): BelongsTo
     {
-        return $this->belongsTo(Region::class);
+        return $this->belongsTo(Region::class)->withDefault(['name' => 'region not selected']);;
     }
 
     public function branch(): BelongsTo
     {
-        return $this->belongsTo(Branch::class);
+        return $this->belongsTo(Branch::class)->withDefault(['name' => 'branch not selected']);
     }
 }

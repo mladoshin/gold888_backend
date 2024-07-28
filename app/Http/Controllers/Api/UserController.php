@@ -16,7 +16,7 @@ class UserController extends Controller
 
     public function index()
     {
-        $users = User::with('region', 'branch')->paginate(10);
+        $users = User::with('region:id,name', 'branch:id,name')->paginate(10);
         return UserResource::collection($users);
     }
 

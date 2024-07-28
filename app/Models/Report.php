@@ -124,4 +124,15 @@ class Report extends Model
     {
         return $this->attributes['interest_income'] + $this->attributes['income_goods'] + $this->attributes['smart_interest_income'] + $this->attributes['smart_income_goods'] - $this->consumptions->sum('sum');
     }
+
+    public static function boot(): void
+    {
+        parent::boot();
+        static::saving(function($item) {
+            $item->user_id = request()->user()->id;
+            $item->branch_id = request()->user()->branch_id;
+            $item->region_id = request()->user()->branch->region_id;
+        });
+    }
+
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Region extends Model
 {
@@ -11,6 +12,11 @@ class Region extends Model
         'user_id', //(director)
         'name',
     ];
+
+    public function branches(): HasMany
+    {
+        return $this->hasMany(Branch::class);
+    }
 
     public function director(): BelongsTo
     {

@@ -20,8 +20,8 @@ class UserResource extends JsonResource
             'role' => $this->role,
             'created_at' => $this->created_at,
             'full_name' => $this->full_name,
-            'branch' => new BranchResource($this->whenLoaded('branch')),
-            'region' => new RegionResource($this->whenLoaded('region')),
+            'branch' => $this->branch->name,
+            'region' => $this->region->name,
         ];
     }
 }

@@ -10,7 +10,7 @@ class StoreBranchRequest extends FormRequest
     {
         return [
             'region_id' => ['required'],
-            'user_id' => ['required'],
+            'user_id' => ['integer', 'nullable'],
             'name' => ['required', 'max:255'],
             'address' => ['required', 'max:255'],
             'kpi_day_plan' => ['nullable'],

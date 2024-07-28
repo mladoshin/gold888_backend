@@ -10,6 +10,7 @@ class UpdateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'branch_id' => ['integer', 'required_if:role,user'],
             'name' => ['required', 'max:254'],
             'surname' => ['nullable', 'max:254'],
             'email' => ['required', 'email', 'max:254', 'unique:users,email,'.$this->user->id],
