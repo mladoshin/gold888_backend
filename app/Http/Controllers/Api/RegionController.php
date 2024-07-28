@@ -11,7 +11,8 @@ class RegionController extends Controller
 {
     public function index()
     {
-        return RegionResource::collection(Region::latest()->paginate(10));
+        $regions = Region::with('director:id,name')->latest()->paginate(10);
+        return RegionResource::collection($regions);
     }
 
     public function store(Request $request)
@@ -28,7 +29,7 @@ class RegionController extends Controller
 
     public function update(Request $request, Region $region)
     {
-        $request->validate(['name' => 'required']);
+        $request->validate(['name' => 'required', 'user_id' => 'required']);
         $region->update($request->all());
         return new RegionResource($region);
     }

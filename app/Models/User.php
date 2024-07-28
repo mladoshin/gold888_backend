@@ -55,12 +55,18 @@ class User extends Authenticatable
             'admin' => 'Админстратор',
             'region_director' => 'Регионалный директор',
             'branch_director' => 'Директор филиала',
+            'user' => 'Normal User',
         ];
     }
 
     public function getFullNameAttribute() :string
     {
         return $this->name . ' ' . $this->surname;
+    }
+
+    public function getImagePathAttribute() :string
+    {
+        return config('app.url').asset('users/'.$this->image);
     }
 
     public function region(): BelongsTo
