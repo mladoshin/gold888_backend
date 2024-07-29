@@ -20,6 +20,6 @@ class Region extends Model
 
     public function director(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id')->withDefault(['name' => 'this user deleted']);
+        return $this->belongsTo(User::class, 'user_id')->withDefault(['name' => 'user deleted or not selected']);
     }
 }

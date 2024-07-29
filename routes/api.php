@@ -23,6 +23,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::get('roles', function (){
+    return \App\Models\User::roles();
+});
 Route::middleware('auth:sanctum')->group(function (){
 
     Route::apiResource('regions',RegionController::class);
