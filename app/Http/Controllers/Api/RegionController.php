@@ -6,16 +6,22 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\RegionResource;
 use App\Models\Region;
 use App\Traits\ApiResponse;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class RegionController extends Controller
 {
     use ApiResponse;
 
-    public function index()
+    public function index(Request $request)
     {
-        $regions = Region::with('director:id,name')->latest()->paginate(10);
+        $key = $request->get('key');
+        $regions = Region::query()
+            ->when($key, function ($query) use ($key){
+                $query->where('name', 'like', '%'.$key.'%');
+            })
+            ->with('director:id,name')
+            ->latest()
+            ->paginate(10);
         return RegionResource::collection($regions);
     }
 

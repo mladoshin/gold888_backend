@@ -14,5 +14,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+    \Artisan::call('optimize');
+    \Artisan::call('route:clear');
+    //\Artisan::call('migrate:fresh --seed');
     return view('welcome');
 });

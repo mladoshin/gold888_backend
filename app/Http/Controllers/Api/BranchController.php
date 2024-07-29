@@ -7,13 +7,21 @@ use App\Http\Requests\StoreBranchRequest;
 use App\Http\Resources\BranchResource;
 use App\Models\Branch;
 use App\Traits\ApiResponse;
+use Illuminate\Http\Request;
 
 class BranchController extends Controller
 {
     use ApiResponse;
-    public function index()
+    public function index(Request $request)
     {
-        $branches = Branch::with('region:id,name', 'director:id,name')->paginate(10);
+        $key = $request->get('key');
+        $branches = Branch::query()
+            ->when($key, function ($query) use ($key){
+                $query->where('name', 'like', '%'.$key.'%');
+            })
+            ->with('region:id,name', 'director:id,name')
+            ->latest()
+            ->paginate(10);
         return BranchResource::collection($branches);
     }
 

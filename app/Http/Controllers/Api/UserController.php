@@ -14,9 +14,16 @@ class UserController extends Controller
 {
     use ApiResponse;
 
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with('region:id,name', 'branch:id,name')->paginate(10);
+        $key = $request->get('key');
+        $users = User::query()
+            ->when($key, function ($query) use ($key){
+                $query->where('name', 'like', '%'.$key.'%');
+            })
+            ->with('region:id,name', 'branch:id,name')
+            ->latest()
+            ->paginate(10);
         return UserResource::collection($users);
     }
 
