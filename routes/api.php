@@ -28,9 +28,13 @@ Route::get('roles', function (){
 });
 Route::middleware('auth:sanctum')->group(function (){
 
-    Route::apiResource('regions',RegionController::class);
-    Route::apiResource('users',UserController::class);
-    Route::apiResource('branches',BranchController::class);
+    Route::middleware('admin')->group(function (){
+        Route::apiResource('regions',RegionController::class);
+        Route::apiResource('users',UserController::class);
+        Route::apiResource('branches',BranchController::class);
+    });
+
+    Route::post('user/update-password', [UserController::class, 'updatePassword']);
 
 
     //reports
@@ -47,5 +51,3 @@ Route::middleware('auth:sanctum')->group(function (){
     });
 });
 Route::post('auth/login', [AuthController::class, 'login']);
-
-Route::get('test', [ReportController::class, 'test']);

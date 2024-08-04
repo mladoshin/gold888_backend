@@ -54,9 +54,6 @@ class UserController extends Controller
     {
         $validatedData = $request->validated();
         try {
-            if ($request->filled('password'))
-                $validatedData['password'] = bcrypt($request->password);
-
             if ($request->hasFile('image')){
                 $image = $request->image;
                 $imageName = time().'.'.$image->getClientOriginalExtension();
@@ -75,4 +72,19 @@ class UserController extends Controller
         $user->delete();
         $this->successResponse();
     }
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required',
+            'new_password' => 'required|min:6|confirmed',
+        ]);
+
+        if (!\Hash::check($request->password, $request->user()->password))
+            return $this->errorResponse('current password is wrong');
+
+        $request->user()->update(['password' => bcrypt($request->new_password)]);
+        return  $this->successResponse();
+    }
+
 }
