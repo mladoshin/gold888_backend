@@ -21,7 +21,9 @@ class UserResource extends JsonResource
             'created_at' => $this->created_at,
             'full_name' => $this->full_name,
             'branch' => $this->branch->name,
+            'branch_id' => $this->branch_id,
             'region' => $this->region->name,
+            'region_id' => $this->region_id,
         ];
     }
 }
