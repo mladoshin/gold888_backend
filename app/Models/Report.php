@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Report extends Model
 {
     protected $fillable = [
-        'region_id',
+        'city_id',
         'branch_id',
         'user_id',
         'start_shift', //Начало смены
@@ -131,7 +131,7 @@ class Report extends Model
         static::saving(function($item) {
             $item->user_id = request()->user()->id;
             $item->branch_id = request()->user()->branch_id;
-            $item->region_id = request()->user()->branch->region_id;
+            $item->city_id = request()->user()->branch->city_id;
         });
     }
 

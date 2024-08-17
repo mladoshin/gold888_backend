@@ -18,6 +18,7 @@ class StoreUserRequest extends FormRequest
             'phone' => ['nullable'],
             'image' => ['nullable', 'image:jpg,png,jpeg'],
             'role' => ['required'],
+            'cities' => ['array', 'nullable']
         ];
     }
 

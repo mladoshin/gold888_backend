@@ -22,8 +22,8 @@ class UserResource extends JsonResource
             'full_name' => $this->full_name,
             'branch' => $this->branch->name,
             'branch_id' => $this->branch_id,
-            'region' => $this->region->name,
-            'region_id' => $this->region_id,
+            'cities' => CityResource::collection($this->cities),
+            'branches' => BranchResource::collection($this->branches)
         ];
     }
 }

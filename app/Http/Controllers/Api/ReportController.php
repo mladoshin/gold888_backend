@@ -16,14 +16,16 @@ class ReportController extends Controller
     public function index(Request $request)
     {
         $key = $request->key;
-        $reports = Report::query();
         $userRole = $request->user()->role;
+
+        $reports = Report::query();
         if ($userRole == 'user' || $userRole == 'branch_director'){
             $reports->where('branch_id', $request->user()->branch_id);
         }
 
-        if ($request->user()->role == 'region_director'){
-            $reports->where('region_id', $request->user()->region_id);
+        if ($userRole == 'region_director'){
+            $branchIds = $request->user()->branches->pluck('id')->toArray();
+            $reports->whereIn('branch_id', $branchIds);
         }
 
         $reports = $reports->select('id', 'user_id', 'branch_id', 'region_id', 'income_goods', 'smart_income_goods', 'own_capital', 'smart_own_capital', 'equity', 'smart_equity', 'interest_income', 'smart_interest_income', 'created_at', 'start_shift', 'smart_start_shift', 'end_shift', 'smart_end_shift', 'deposit_tickets', 'smart_deposit_tickets')

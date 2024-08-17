@@ -27,7 +27,7 @@ class RegionController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate(['name' => 'required', 'user_id' => 'integer|nullable']);
+        $request->validate(['name' => 'required']);
         try {
             $item = Region::create($request->all());
             return $this->successResponse($item);
@@ -43,7 +43,7 @@ class RegionController extends Controller
 
     public function update(Request $request, Region $region)
     {
-        $request->validate(['name' => 'required', 'user_id' => 'integer|nullable']);
+        $request->validate(['name' => 'required']);
         try {
             $region->update($request->all());
             return $this->successResponse($region);

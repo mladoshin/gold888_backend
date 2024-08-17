@@ -19,7 +19,7 @@ class BranchController extends Controller
             ->when($key, function ($query) use ($key){
                 $query->where('name', 'like', '%'.$key.'%');
             })
-            ->with('region:id,name', 'director:id,name')
+            ->with('city.region', 'director:id,name')
             ->latest()
             ->paginate(10);
         return BranchResource::collection($branches);

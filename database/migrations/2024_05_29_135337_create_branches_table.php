@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('branches', function (Blueprint $table) {
             $table->id();
-            $table->integer('region_id');
+            $table->integer('city_id');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->string('name');
             $table->mediumText('address');

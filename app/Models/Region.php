@@ -9,17 +9,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Region extends Model
 {
     protected $fillable = [
-        'user_id', //(director)
         'name',
     ];
 
-    public function branches(): HasMany
+    public function cities(): HasMany
     {
-        return $this->hasMany(Branch::class);
+        return $this->hasMany(City::class);
     }
 
-    public function director(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'user_id')->withDefault(['name' => 'user deleted or not selected']);
-    }
 }

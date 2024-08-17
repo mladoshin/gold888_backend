@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Branch extends Model
 {
     protected $fillable = [
-        'region_id',
+        'city_id',
         'user_id', // (director)
         'name',
         'address',
@@ -20,9 +20,9 @@ class Branch extends Model
         'kpi_year_fact',
     ];
 
-    public function region(): BelongsTo
+    public function city(): BelongsTo
     {
-        return $this->belongsTo(Region::class)->withDefault(['name' => 'this region deleted']);
+        return $this->belongsTo(City::class)->withDefault(['name' => ' city deleted']);
     }
 
     public function director(): BelongsTo

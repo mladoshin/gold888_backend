@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
-            $table->integer('region_id')->nullable();
+            $table->integer('city_id')->nullable();
             $table->integer('branch_id')->nullable();
             $table->integer('user_id')->nullable();
             $table->string('start_shift')->nullable();

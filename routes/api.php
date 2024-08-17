@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\BranchController;
+use App\Http\Controllers\Api\CityController;
 use App\Http\Controllers\Api\RegionController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\UserController;
@@ -30,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function (){
 
     Route::middleware('admin')->group(function (){
         Route::apiResource('regions',RegionController::class);
+        Route::apiResource('cities',CityController::class);
         Route::apiResource('users',UserController::class);
         Route::apiResource('branches',BranchController::class);
     });

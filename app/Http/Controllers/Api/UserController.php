@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
+use App\Models\Branch;
+use App\Models\City;
 use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
@@ -21,7 +23,7 @@ class UserController extends Controller
             ->when($key, function ($query) use ($key){
                 $query->where('name', 'like', '%'.$key.'%');
             })
-            ->with('region:id,name', 'branch:id,name')
+            ->with('cities', 'branch:id,name')
             ->latest()
             ->paginate(10);
         return UserResource::collection($users);
@@ -29,6 +31,7 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request)
     {
+        \DB::beginTransaction();
         try {
             $validatedData = $request->validated();
             $validatedData['password'] = bcrypt($request->password);
@@ -38,9 +41,21 @@ class UserController extends Controller
                 $image->move('users', $imageName);
                 $validatedData['image'] = $imageName;
             }
-            $item = User::create($validatedData);
-            return $this->successResponse($item);
+
+            $user = User::create($validatedData);
+
+            if (isset($request->cities))
+                City::whereIn('id', $request->cities)->update(['user_id' => $user->id]);
+
+            if ($request->branch_id && $user->role == 'branch_director')
+                Branch::where('id', $request->branch_id)->update(['user_id' => $user->id]);
+
+            if (count($request->branches)>0)
+                $user->branches()->attach($request->branches);
+            \DB::commit();
+            return $this->successResponse($user);
         }catch (\Exception $e){
+            \DB::rollBack();
             return $this->errorResponse($e->getMessage());
         }
     }
@@ -53,6 +68,7 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, User $user)
     {
         $validatedData = $request->validated();
+        \DB::beginTransaction();
         try {
             if ($request->hasFile('image')){
                 $image = $request->image;
@@ -61,8 +77,19 @@ class UserController extends Controller
                 $validatedData['image'] = $imageName;
             }
             $user->update($validatedData);
+
+            if (isset($request->cities))
+                City::whereIn('id', $request->cities)->update(['user_id' => $user->id]);
+
+            if ($request->branch_id && $user->role == 'branch_director')
+                Branch::where('id', $request->branch_id)->update(['user_id' => $user->id]);
+
+            if (count($request->branches)>0)
+                $user->branches()->sync($request->branches);
+            \DB::commit();
             return $this->successResponse($user);
         }catch (\Exception $e){
+            \DB::rollBack();
             return $this->errorResponse($e->getMessage());
         }
     }

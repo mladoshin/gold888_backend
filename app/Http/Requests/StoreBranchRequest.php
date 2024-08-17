@@ -9,7 +9,7 @@ class StoreBranchRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'region_id' => ['required'],
+            'city_id' => ['required'],
             'user_id' => ['integer', 'nullable'],
             'name' => ['required', 'max:255'],
             'address' => ['required', 'max:255'],
