@@ -50,7 +50,7 @@ class UserController extends Controller
             if ($request->branch_id && $user->role == 'branch_director')
                 Branch::where('id', $request->branch_id)->update(['user_id' => $user->id]);
 
-            if (count($request->branches)>0)
+            if (!empty($request->branches) && $user->role == 'region_director')
                 $user->branches()->attach($request->branches);
             \DB::commit();
             return $this->successResponse($user);
@@ -84,7 +84,7 @@ class UserController extends Controller
             if ($request->branch_id && $user->role == 'branch_director')
                 Branch::where('id', $request->branch_id)->update(['user_id' => $user->id]);
 
-            if (count($request->branches)>0)
+            if (!empty($request->branches) && $user->role == 'region_director')
                 $user->branches()->sync($request->branches);
             \DB::commit();
             return $this->successResponse($user);
