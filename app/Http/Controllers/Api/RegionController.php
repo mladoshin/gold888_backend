@@ -15,13 +15,19 @@ class RegionController extends Controller
     public function index(Request $request)
     {
         $key = $request->get('key');
-        $regions = Region::query()
-            ->when($key, function ($query) use ($key){
+        $perPage = $request->perPage ?? null;
+        $regions = Region::query();
+        $regions->when($key, function ($query) use ($key){
                 $query->where('name', 'like', '%'.$key.'%');
             })
             ->with('director:id,name')
-            ->latest()
-            ->paginate(10);
+            ->latest();
+        if ($perPage){
+            $regions = $regions->paginate($perPage);
+        }else{
+            $regions = $regions->get();
+        }
+
         return RegionResource::collection($regions);
     }
 

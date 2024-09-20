@@ -19,13 +19,19 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $key = $request->get('key');
-        $users = User::query()
-            ->when($key, function ($query) use ($key){
+        $perPage = $request->perPage ?? null;
+        $users = User::query();
+        $users->when($key, function ($query) use ($key){
                 $query->where('name', 'like', '%'.$key.'%');
             })
             ->with('cities', 'branch:id,name')
-            ->latest()
-            ->paginate(10);
+            ->latest();
+
+        if ($perPage){
+            $users = $users->paginate($perPage);
+        }else{
+            $users = $users->get();
+        }
         return UserResource::collection($users);
     }
 

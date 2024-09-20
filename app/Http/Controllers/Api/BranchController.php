@@ -15,13 +15,20 @@ class BranchController extends Controller
     public function index(Request $request)
     {
         $key = $request->get('key');
-        $branches = Branch::query()
-            ->when($key, function ($query) use ($key){
+        $perPage = $request->perPage ?? null;
+        $branches = Branch::query();
+        $branches->when($key, function ($query) use ($key){
                 $query->where('name', 'like', '%'.$key.'%');
             })
             ->with('city.region', 'director:id,name')
-            ->latest()
-            ->paginate(10);
+            ->latest();
+
+        if ($perPage){
+            $branches = $branches->paginate($perPage);
+        }else{
+            $branches = $branches->get();
+        }
+
         return BranchResource::collection($branches);
     }
 
