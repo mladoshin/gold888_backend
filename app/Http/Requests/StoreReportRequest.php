@@ -9,6 +9,7 @@ class StoreReportRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'branch_id' => ['integer'],
             'start_shift' => ['nullable'],
             'refreshment' => ['nullable'],
             'deposit' => ['nullable'],
