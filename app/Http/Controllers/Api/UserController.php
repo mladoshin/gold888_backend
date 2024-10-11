@@ -109,15 +109,12 @@ class UserController extends Controller
     public function updatePassword(Request $request)
     {
         $request->validate([
-            'password' => 'required',
-            'new_password' => 'required|min:6|confirmed',
+            'user_id' => 'required',
+            'new_password' => 'required|min:6',
         ]);
-
-        if (!\Hash::check($request->password, $request->user()->password))
-            return $this->errorResponse('current password is wrong');
-
-        $request->user()->update(['password' => bcrypt($request->new_password)]);
-        return  $this->successResponse();
+        $user = User::find($request->user_id);
+        $user->update(['password' => bcrypt($request->new_password)]);
+        return $this->successResponse();
     }
 
 }

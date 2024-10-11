@@ -21,7 +21,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+    $user =  \App\Models\User::with(['branch:id,name', 'branches:id,name'])->find($request->user()->id);
+    return new \App\Http\Resources\UserResource($user);
 });
 
 Route::get('roles', function (){
