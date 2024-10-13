@@ -18,6 +18,8 @@ class ReportController extends Controller
     {
         $key = $request->key;
         $userRole = $request->user()->role;
+        $cityId = $request->city_id;
+        $branchId = $request->branch_id;
 
         $reports = Report::query();
         if ($userRole == 'user' || $userRole == 'branch_director'){
@@ -37,6 +39,12 @@ class ReportController extends Controller
                     ->orWhere('equity', 'like', '%'.$key.'%')
                     ->orWhere('income_goods', 'like', '%'.$key.'%');
             })
+            ->when($cityId, function ($q) use ($cityId){
+                $q->where('city_id', $cityId);
+            })
+            ->when($branchId, function ($q) use ($branchId){
+                $q->where('branch_id', $branchId);
+            })
         ->get();
 
         $reports = (new ReportFilter())->handle($reports, $request->only('sum_start_shift', 'sum_end_shift', 'sum_own_capital', 'sum_equity', 'consumptions_sum_sum', 'net_profit', 'sum_income_goods', 'created_at'));
@@ -48,6 +56,7 @@ class ReportController extends Controller
     {
         \DB::beginTransaction();
         $data = $request->all();
+        $data['city_id'] = Branch::find($request->branch_id)->city_id;
         try {
             $report = Report::create($data);
             $report->consumptions()->createMany($request->smart_consumptions ?? []);

@@ -24,7 +24,7 @@ class UserResource extends JsonResource
             'branch_name' => $this->branch->name,
             'branch_id' => $this->branch_id,
             'cities' => CityResource::collection($this->cities),
-            'branches' => BranchResource::collection($this->branches()->count() > 0 ? $this->branches : Branch::select('id', 'name')->latest()->get())
+            'branches' => BranchResource::collection($this->role == 'admin' ? Branch::select('id', 'name')->latest()->get() : $this->branches)
         ];
     }
 }

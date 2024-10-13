@@ -131,7 +131,7 @@ class Report extends Model
         static::saving(function($item) {
             $item->user_id = request()->user()->id;
 //            $item->branch_id = request()->user()->branch_id;
-            $item->city_id = request()->user()->branch->city_id;
+            //$item->city_id = request()->user()->branch->city_id;
         });
     }
 
