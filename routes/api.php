@@ -32,10 +32,10 @@ Route::middleware('auth:sanctum')->group(function (){
 
     Route::middleware('admin')->group(function (){
         Route::apiResource('regions',RegionController::class);
-        Route::apiResource('cities',CityController::class);
         Route::apiResource('users',UserController::class);
         Route::apiResource('branches',BranchController::class);
     });
+    Route::apiResource('cities',CityController::class);
 
     Route::post('user/update-password', [UserController::class, 'updatePassword']);
 

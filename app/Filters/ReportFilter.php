@@ -48,9 +48,15 @@ class ReportFilter
             });
         }
 
-        if (isset($params['created_at'])){
+        if (isset($params['date_from'])){
             $items = $items->filter(function ($item) use ($params) {
-                return date('Y-m-d', strtotime($item['created_at'])) <= $params['created_at'];
+                return date('Y-m-d', strtotime($item['created_at'])) >= $params['date_from'];
+            });
+        }
+
+        if (isset($params['date_to'])){
+            $items = $items->filter(function ($item) use ($params) {
+                return date('Y-m-d', strtotime($item['created_at'])) <= $params['date_to'];
             });
         }
 

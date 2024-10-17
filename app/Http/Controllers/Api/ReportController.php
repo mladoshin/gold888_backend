@@ -47,7 +47,7 @@ class ReportController extends Controller
             })
         ->get();
 
-        $reports = (new ReportFilter())->handle($reports, $request->only('sum_start_shift', 'sum_end_shift', 'sum_own_capital', 'sum_equity', 'consumptions_sum_sum', 'net_profit', 'sum_income_goods', 'created_at'));
+        $reports = (new ReportFilter())->handle($reports, $request->only('sum_start_shift', 'sum_end_shift', 'sum_own_capital', 'sum_equity', 'consumptions_sum_sum', 'net_profit', 'sum_income_goods', 'date_from', 'date_to'));
         $paginatedData = (new PaginateCollection())->handle($reports, $request->page);
         return response()->json($paginatedData);
     }
