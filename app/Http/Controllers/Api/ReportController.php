@@ -31,7 +31,7 @@ class ReportController extends Controller
             $reports->whereIn('branch_id', $branchIds);
         }
 
-        $reports = $reports->select('id', 'user_id', 'branch_id', 'city_id', 'income_goods', 'smart_income_goods', 'own_capital', 'smart_own_capital', 'equity', 'smart_equity', 'interest_income', 'smart_interest_income', 'created_at', 'start_shift', 'smart_start_shift', 'end_shift', 'smart_end_shift', 'deposit_tickets', 'smart_deposit_tickets', DB::raw("(SELECT name FROM branches WHERE branch_id = branches.id) as branch_name"))
+        $reports = $reports->select('id', 'user_id', 'branch_id', 'city_id', 'date', 'income_goods', 'smart_income_goods', 'own_capital', 'smart_own_capital', 'equity', 'smart_equity', 'interest_income', 'smart_interest_income', 'created_at', 'start_shift', 'smart_start_shift', 'end_shift', 'smart_end_shift', 'deposit_tickets', 'smart_deposit_tickets', DB::raw("(SELECT name FROM branches WHERE branch_id = branches.id) as branch_name"))
             ->latest()
             ->withSum('consumptions', 'sum')
             ->when($key, function ($q) use ($key){

@@ -12,6 +12,7 @@ class StoreReportRequest extends FormRequest
             'branch_id' => ['integer'],
             'start_shift' => ['nullable'],
             'refreshment' => ['nullable'],
+            'date' => ['nullable'],
             'deposit' => ['nullable'],
             'renewal' => ['nullable'],
             'partial_redemption' => ['nullable'],

@@ -59,6 +59,7 @@ return new class extends Migration {
             $table->string('smart_own_capital')->nullable();
             $table->string('smart_end_shift')->nullable();
             $table->string('smart_buying_up')->nullable();
+            $table->date('date')->nullable();
             $table->timestamps();
         });
     }

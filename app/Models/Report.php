@@ -14,6 +14,7 @@ class Report extends Model
         'city_id',
         'branch_id',
         'user_id',
+        'date',
         'start_shift', //Начало смены
         'end_shift', //конец смены
         'refreshment', //Подкрепление
@@ -120,7 +121,7 @@ class Report extends Model
         return $this->attributes['deposit_tickets'] + $this->attributes['smart_deposit_tickets'];
     }
 
-    public function getNetProfitAttribute()
+    public function getNetProfitAttribute() //chistiy pribil
     {
         return $this->attributes['interest_income'] + $this->attributes['income_goods'] + $this->attributes['smart_interest_income'] + $this->attributes['smart_income_goods'] - $this->consumptions->sum('sum');
     }

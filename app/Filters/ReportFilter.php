@@ -50,13 +50,13 @@ class ReportFilter
 
         if (isset($params['date_from'])){
             $items = $items->filter(function ($item) use ($params) {
-                return date('Y-m-d', strtotime($item['created_at'])) >= $params['date_from'];
+                return date('Y-m-d', strtotime($item['date'])) >= $params['date_from'];
             });
         }
 
         if (isset($params['date_to'])){
             $items = $items->filter(function ($item) use ($params) {
-                return date('Y-m-d', strtotime($item['created_at'])) <= $params['date_to'];
+                return date('Y-m-d', strtotime($item['date'])) <= $params['date_to'];
             });
         }
 
