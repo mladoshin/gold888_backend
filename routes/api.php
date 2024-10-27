@@ -42,8 +42,8 @@ Route::middleware('auth:sanctum')->group(function (){
 
     //reports
     Route::get('reports/last',[ReportController::class, 'getLastReport']);
-    Route::apiResource('reports',ReportController::class);
     Route::get('reports/statistics',[ReportController::class, 'statistics']);
+    Route::apiResource('reports',ReportController::class);
 
 
     Route::post('auth/logout', [AuthController::class, 'logout']);

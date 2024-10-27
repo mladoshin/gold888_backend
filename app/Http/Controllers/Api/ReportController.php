@@ -8,6 +8,7 @@ use App\Http\Requests\StoreReportRequest;
 use App\Http\Resources\ReportTableResource;
 use App\Models\Branch;
 use App\Models\Report;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
@@ -107,5 +108,46 @@ class ReportController extends Controller
             'success' => true,
             'data' => $item
         ]);
+    }
+
+    public function statistics(Request $request)
+    {
+
+
+        $reports = DB::table('reports')->select(
+            'created_at',
+            'fixed_flow',
+            DB::raw('SUM(fixed_flow) as total_fixed_flow')
+        )
+            ->orderBy('created_at')
+            ->get()
+        ->groupBy('created_at');
+
+        return response()->json($reports);
+
+        //consumptions_sum_sum, net_profit, fixed_flow
+        $cityId = $request->city_id;
+        $branchId = $request->branch_id;
+        $userRole = $request->user()->role;
+
+        $reports = Report::query();
+        if ($userRole == 'user' || $userRole == 'branch_director'){
+            $reports->where('branch_id', $request->user()->branch_id);
+        }
+
+        if ($userRole == 'region_director'){
+            $branchIds = $request->user()->branches->pluck('id')->toArray();
+            $reports->whereIn('branch_id', $branchIds);
+        }
+
+        $reports = $reports->select('id', 'user_id', 'branch_id', 'city_id', 'date', 'income_goods', 'smart_income_goods', 'own_capital', 'smart_own_capital', 'equity', 'smart_equity', 'interest_income', 'smart_interest_income', 'created_at', 'start_shift', 'smart_start_shift', 'end_shift', 'smart_end_shift', 'deposit_tickets', 'smart_deposit_tickets')
+            ->latest()
+            ->withSum('consumptions', 'sum')
+
+            ->selectRaw('DATE(created_at) as date, SUM(net_profit) as total_price')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+        return response()->json($reports);
     }
 }
