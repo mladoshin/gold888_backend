@@ -16,3 +16,8 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+package-lock.json
+composer.lock
+supervisord.pid
+supervisord.log
+docker/mysql/db_data

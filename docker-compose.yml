@@ -1,0 +1,78 @@
+#version: "3.7"
+services:
+    nginx_gold888:
+        image: nginx:1.16-alpine
+        container_name: nginx_gold888
+        restart: unless-stopped
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ./:/var/www/api
+            - ./docker/nginx:/etc/nginx/conf.d/
+        networks:
+            - network_gold888
+        depends_on:
+            - api_gold888
+    db_gold888:
+        image: mysql:8.3.0
+        container_name: db_gold888
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "3306:3306"
+        environment:
+            MYSQL_DATABASE: app_db
+            MYSQL_ROOT_PASSWORD: secret
+            MYSQL_PASSWORD: secret
+            MYSQL_USER: user
+            SERVICE_TAGS: dev
+            SERVICE_NAME: mysql
+        volumes:
+            - ./docker/mysql/db_data:/var/lib/mysql
+            - ./docker/mysql:/etc/mysql/conf.d
+            - ./docker/mysql/dump:/var/dump
+        networks:
+            - network_gold888
+    phpmyadmin:
+        image: phpmyadmin
+        restart: always
+        depends_on:
+            - db_gold888
+        ports:
+            - 8783:80
+        environment:
+            - PMA_ARBITRARY=1
+        networks:
+            - network_gold888
+    redis_gold888:
+        image: 'redis:alpine'
+        ports:
+            - '6379:6379'
+        container_name: redis_gold888
+        networks:
+            - network_gold888
+    api_gold888:
+        build:
+            args:
+                user: ubuntu
+                uid: 1000
+            context: ./docker/php
+            dockerfile: Dockerfile
+        tty: true
+        container_name: api_gold888
+        restart: unless-stopped
+        working_dir: /var/www/api
+        volumes:
+            - ./:/var/www/api
+        networks:
+            - network_gold888
+        links:
+            - db_gold888
+        depends_on:
+            - redis_gold888
+volumes:
+    db_data:
+networks:
+    network_gold888:
+        driver: bridge

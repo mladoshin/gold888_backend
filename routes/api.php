@@ -28,6 +28,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('roles', function (){
     return \App\Models\User::roles();
 });
+Route::prefix('overdue')->name('overdue.')->group(function() {
+    Route::post('create', [\App\Http\Controllers\Api\OverdueController::class, 'create'])->name('create');
+    Route::put('update', [\App\Http\Controllers\Api\OverdueController::class, 'update'])->name('update');
+    Route::get('status-list', [\App\Http\Controllers\Api\OverdueController::class, 'statusList'])->name('statusList');
+    Route::get('list', [\App\Http\Controllers\Api\OverdueController::class, 'list'])->name('list');
+    Route::get('item/{id}', [\App\Http\Controllers\Api\OverdueController::class, 'item'])->name('item');
+    Route::delete('del/{id}', [\App\Http\Controllers\Api\OverdueController::class, 'del'])->name('del');
+
+});
 Route::middleware('auth:sanctum')->group(function (){
 
     Route::middleware('admin')->group(function (){
