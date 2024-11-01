@@ -112,16 +112,18 @@ class ReportController extends Controller
 
     public function statistics(Request $request)
     {
+        //return Report::whereDate('date', '2024-10-26')->get();
 
-
-        $reports = DB::table('reports')->select(
-            'created_at',
-            'fixed_flow',
-            DB::raw('SUM(fixed_flow) as total_fixed_flow')
-        )
-            ->orderBy('created_at')
-            ->get()
-        ->groupBy('created_at');
+        $reports = DB::table('reports')
+            ->leftJoin('consumptions', 'consumptions.report_id', '=', 'reports.id')
+            ->selectRaw('
+		        reports.date,
+		        SUM(reports.fixed_flow) as total_fixed_flow,
+		        SUM(consumptions.sum) as total_consumptions,
+		        (SUM(reports.interest_income) + SUM(reports.income_goods) + SUM(reports.smart_interest_income) + SUM(reports.smart_income_goods) - SUM(consumptions.sum)) as net_profit
+		    ')
+            ->groupBy('reports.date')
+            ->get();
 
         return response()->json($reports);
 
@@ -140,13 +142,11 @@ class ReportController extends Controller
             $reports->whereIn('branch_id', $branchIds);
         }
 
-        $reports = $reports->select('id', 'user_id', 'branch_id', 'city_id', 'date', 'income_goods', 'smart_income_goods', 'own_capital', 'smart_own_capital', 'equity', 'smart_equity', 'interest_income', 'smart_interest_income', 'created_at', 'start_shift', 'smart_start_shift', 'end_shift', 'smart_end_shift', 'deposit_tickets', 'smart_deposit_tickets')
+        $reports = $reports->select('id', 'user_id', 'branch_id', 'city_id', 'date', 'income_goods', 'smart_income_goods', 'own_capital', 'smart_own_capital', 'equity', 'smart_equity', 'interest_income', 'smart_interest_income', 'created_at', 'start_shift', 'smart_start_shift', 'end_shift', 'smart_end_shift', 'deposit_tickets', 'smart_deposit_tickets', 'fixed_flow', 'smart_fixed_flow')
+            ->groupBy('date')
             ->latest()
             ->withSum('consumptions', 'sum')
-
-            ->selectRaw('DATE(created_at) as date, SUM(net_profit) as total_price')
-            ->groupBy('date')
-            ->orderBy('date')
+            #->selectRaw('DATE(created_at) as date, SUM(net_profit) as total_price')
             ->get();
         return response()->json($reports);
     }
