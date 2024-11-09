@@ -27,7 +27,7 @@ class OverdueFactory extends Factory
             'status' => $this->faker->randomElement(self::OVERDUE_STATUS_ARRAY),
             'amount' => $this->faker->numberBetween(0, 1000000),
             'returned' => $this->faker->numberBetween(0, 1000000),
-            'user_id' => \App\Models\User::inRandomOrder()->value('id'),
+            'user' => $this->faker->userName,
             'return_date' => $this->faker->dateTimeBetween('-1 year', 'now')->format('Y-m-d'),
         ];
     }

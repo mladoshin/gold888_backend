@@ -1,7 +1,7 @@
-1. -post-'/api/overdue/create' for admin creating a transaction request[
+1. -post-'/api/overdue/create' for admin creating a overdue request[
    'returned'=>"integer|req"
    'amount'=>"integer|req"
-   'user_id'=>"users id from the database|req",
+   'user'=>"string|req",
    "result"=>'string|req'
    "status"=>'string in OverdueStatus list|req',
    "return_date"=>'date|req',
@@ -18,7 +18,7 @@
 4. -put-'/api/overdue/update' for updating  request[
    'returned'=>"integer|req"
    'amount'=>"integer|req"
-   'user_id'=>"users id from the database|req",
+   'user'=>"string|req",
    'overdue_id''=>"overdue id from the database|req",
    "result"=>'string|req'
    "status"=>'string in OverdueStatus list|req',

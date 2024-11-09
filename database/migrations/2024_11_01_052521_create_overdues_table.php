@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('overdues', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->string('user');
             $table->string('status')->default(\App\Models\OverdueStatus::TRANSFERRED_TO_A_LAWYER);
             $table->bigInteger('amount');
             $table->unsignedBigInteger('returned');

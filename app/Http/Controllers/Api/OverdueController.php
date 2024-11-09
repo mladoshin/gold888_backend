@@ -15,7 +15,7 @@ class OverdueController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required|integer|exists:' . (new User())->getTable() . ',id',
+            'user' => 'required|string',
             'status' => 'string|in:' . implode(',', OverdueStatus::getStatusList()),
             'amount' => 'numeric|min:0',
             'returned' => 'numeric|min:0',
@@ -41,7 +41,7 @@ class OverdueController extends Controller
 
         $validator = Validator::make($request->all(), [
             'overdue_id'=> 'required|integer|exists:' . (new Overdue())->getTable() . ',id',
-            'user_id' => 'required|integer|exists:' . (new User())->getTable() . ',id',
+            'user' => 'required|string',
             'status' => 'string|in:' . implode(',', OverdueStatus::getStatusList()),
             'amount' => 'numeric|min:0',
             'returned' => 'numeric|min:0',
@@ -74,11 +74,7 @@ class OverdueController extends Controller
         $query = Overdue::query();
 
         if ($request->filled('search')) {
-            $search = mb_strtolower($request->input('search'));
-            $userIds = User::whereRaw('LOWER(name) LIKE ?', ["%{$search}%"])
-                ->orWhere('surname', 'like', '%' . $request->input('search') . '%')
-                ->pluck('id');
-            $query->whereIn('user_id', $userIds);
+            $query->where('user', 'like', '%' . $request->input('search') . '%');
         }
 
         if ($request->filled('filter-status')) {

@@ -16,7 +16,7 @@ class OverdueResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'user' => new UserResource($this->user),
+            'user' =>$this->user,
             'status' => $this->status,
             'amount' => $this->amount,
             'result' => $this->result,
