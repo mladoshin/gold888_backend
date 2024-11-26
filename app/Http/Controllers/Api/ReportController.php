@@ -119,8 +119,11 @@ class ReportController extends Controller
             ->selectRaw('
 		        reports.date,
 		        SUM(reports.fixed_flow) as total_fixed_flow,
-		        SUM(consumptions.sum) as total_consumptions,
-		        (SUM(reports.interest_income) + SUM(reports.income_goods) + SUM(reports.smart_interest_income) + SUM(reports.smart_income_goods) - SUM(consumptions.sum)) as net_profit
+		         COALESCE(SUM(consumptions.sum), 0) as total_consumptions,
+        COALESCE(
+            (SUM(reports.interest_income) + SUM(reports.income_goods) + SUM(reports.smart_interest_income) + SUM(reports.smart_income_goods) - COALESCE(SUM(consumptions.sum), 0)),
+            0
+        ) as net_profit
 		    ')
             ->groupBy('reports.date')
             ->get();
