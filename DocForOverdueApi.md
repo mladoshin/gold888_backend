@@ -27,5 +27,7 @@
 5. -get- '/api/overdue/item/{id}'  get item
 6. -delete- '/api/overdue/del/{id}'  delete item
 
+api/reports/income-city\ 
+
 
                                              ]

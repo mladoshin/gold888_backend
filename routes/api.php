@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
+Route::get('reports/income-city',[ReportController::class, 'incomeCity']);
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     $user =  \App\Models\User::with(['branch:id,name', 'branches:id,name'])->find($request->user()->id);
     return new \App\Http\Resources\UserResource($user);
@@ -37,6 +37,7 @@ Route::prefix('overdue')->name('overdue.')->group(function() {
     Route::delete('del/{id}', [\App\Http\Controllers\Api\OverdueController::class, 'del'])->name('del');
 
 });
+
 Route::middleware('auth:sanctum')->group(function (){
 
     Route::middleware('admin')->group(function (){
@@ -50,6 +51,7 @@ Route::middleware('auth:sanctum')->group(function (){
 
 
     //reports
+    Route::get('reports/income-city',[ReportController::class, 'incomeCity']);
     Route::get('reports/last',[ReportController::class, 'getLastReport']);
     Route::get('reports/statistics',[ReportController::class, 'statistics']);
     Route::middleware('director')->group(function () {

@@ -77,6 +77,11 @@ class Report extends Model
         return $this->belongsTo(User::class, 'user_id')->withDefault(['name' => 'this user deleted']);
     }
 
+    public function city(): BelongsTo
+    {
+        return $this->belongsTo(City::class, 'city_id');
+    }
+
     public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class, 'branch_id')->withDefault(['name' => 'this branch deleted']);
@@ -121,9 +126,22 @@ class Report extends Model
         return $this->attributes['deposit_tickets'] + $this->attributes['smart_deposit_tickets'];
     }
 
-    public function getNetProfitAttribute() //chistiy pribil
+    public function calculateIncome(): float
     {
-        return $this->attributes['interest_income'] + $this->attributes['income_goods'] + $this->attributes['smart_interest_income'] + $this->attributes['smart_income_goods'] - $this->consumptions->sum('sum');
+        return $this->attributes['interest_income'] +
+            $this->attributes['income_goods'] +
+            $this->attributes['smart_interest_income'] +
+            $this->attributes['smart_income_goods'];
+    }
+
+    public function calculateExpenses(): float
+    {
+        return $this->consumptions->sum('sum');
+    }
+
+    public function getNetProfitAttribute(): float
+    {
+        return $this->calculateIncome() - $this->calculateExpenses();
     }
 
     public static function boot(): void
@@ -131,8 +149,6 @@ class Report extends Model
         parent::boot();
         static::saving(function($item) {
             $item->user_id = request()->user()->id;
-//            $item->branch_id = request()->user()->branch_id;
-            //$item->city_id = request()->user()->branch->city_id;
         });
     }
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Filters\ReportFilter;
 use App\Helpers\PaginateCollection;
 use App\Http\Requests\StoreReportRequest;
+use App\Http\Resources\CityReportsResource;
 use App\Http\Resources\ReportTableResource;
 use App\Models\Branch;
 use App\Models\Report;
@@ -146,6 +147,14 @@ class ReportController extends Controller
     public function destroy(int $reportId)
     {
         return Report::where('id', $reportId)->delete();
+    }
+
+    public function incomeCity()
+    {
+        $report =Report::all();
+
+
+        return CityReportsResource::collection($report);
     }
 
     public function getLastReport(Request $request)

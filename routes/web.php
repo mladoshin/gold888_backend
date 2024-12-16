@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Overdue;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,6 +15,14 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('/clear', function () {
+    Artisan::call('config:cache');
+    Artisan::call('cache:clear');
+    Artisan::call('view:clear');
+    Log::debug('CLEARED');
+    Artisan::call('route:clear');
+    return "Cache clear";
+});
 
 Route::get('/', function () {
     \Artisan::call('optimize');
