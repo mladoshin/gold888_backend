@@ -21,6 +21,7 @@ class OverdueController extends Controller
             'returned' => 'numeric|min:0',
             'result' => 'string|nullable',
             'return_date' => 'date',
+            'branch_id' => 'numeric|exists:branches,id',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -95,9 +96,25 @@ class OverdueController extends Controller
             $query->where('returned', '<=', $request->input('filter-returned-to'));
         }
 
+        $count = $query->count();
+        $totalAmount = $query->sum('amount');
+        $totalReturned = $query->sum('returned');
+
         $list = $query->orderBy('id', 'desc')->paginate(10);
 
-        return OverdueResource::collection($list);
+        return response()->json([
+            'statistics' => [
+                'count' => $count,
+                'totalAmount' => $totalAmount,
+                'totalReturned' => $totalReturned,
+            ],
+            'items' => OverdueResource::collection($list),
+            'meta' => [
+                'total' => $count,
+                'per_page' => 10
+            ]
+        ]);
+
     }
 
     public function item($id)

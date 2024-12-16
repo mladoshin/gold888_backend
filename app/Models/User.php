@@ -58,6 +58,7 @@ class User extends Authenticatable
             'region_director' => 'Регионалный директор',
             'branch_director' => 'Директор филиала',
             'user' => 'Пользователь',
+            'director' => 'Руководитель'
         ];
     }
 

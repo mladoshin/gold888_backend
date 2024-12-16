@@ -21,3 +21,4 @@ composer.lock
 supervisord.pid
 supervisord.log
 docker/mysql/db_data
+.DS_Store

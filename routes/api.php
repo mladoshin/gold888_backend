@@ -52,6 +52,10 @@ Route::middleware('auth:sanctum')->group(function (){
     //reports
     Route::get('reports/last',[ReportController::class, 'getLastReport']);
     Route::get('reports/statistics',[ReportController::class, 'statistics']);
+    Route::middleware('director')->group(function () {
+        Route::put('reports/{id}',[ReportController::class, 'update']);
+        Route::delete('reports/{id}',[ReportController::class, 'destroy']);
+    });
     Route::apiResource('reports',ReportController::class);
 
 
@@ -62,4 +66,4 @@ Route::middleware('auth:sanctum')->group(function (){
         return response()->json(['success' => true, 'data' => true]);
     });
 });
-Route::post('auth/login', [AuthController::class, 'login']);
+Route::post('auth/login', [AuthController::class, 'login'])->name("login");
