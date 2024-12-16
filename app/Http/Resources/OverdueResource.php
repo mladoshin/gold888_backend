@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -21,6 +22,7 @@ class OverdueResource extends JsonResource
             'amount' => $this->amount,
             'result' => $this->result,
             'return_date' => $this->return_date,
+            'returned' => $this->returned
         ];
     }
 }
