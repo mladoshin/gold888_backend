@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 
+use Database\Factories\RegionFactory;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -14,6 +15,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
+            RegionSeeder::class,
+            CitySeeder::class,
+            BranchesSeeder::class,
             OverdueSeeder::class
         ]);
     }

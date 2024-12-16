@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\OverdueResource;
+use App\Models\Branch;
 use App\Models\Overdue;
 use App\Models\OverdueStatus;
 use App\Models\User;
@@ -80,6 +81,15 @@ class OverdueController extends Controller
 
         if ($request->filled('filter-status')) {
             $query->where('status', $request->input('filter-status'));
+        }
+
+        if ($request->filled('branch_id')) {
+            $query->where('branch_id', $request->filled('branch_id'));
+        }
+
+        if ($request->filled('city_id')) {
+            $branches = Branch::where('city_id', $request->input('city_id'))->pluck('id');
+            $query->whereIn('branch_id', $branches);
         }
 
         if ($request->filled('filter-amount-from')) {
