@@ -30,7 +30,6 @@ class OverdueFactory extends Factory
             'returned' => $this->faker->numberBetween(0, 1000000),
             'user' => $this->faker->userName,
             'return_date' => $this->faker->dateTimeBetween('-1 year', 'now')->format('Y-m-d'),
-            'branch_id'=>Branch::query()->inRandomOrder()->value('id'),
         ];
     }
 }
