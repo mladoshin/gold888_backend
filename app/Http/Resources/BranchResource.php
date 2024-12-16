@@ -12,12 +12,12 @@ class BranchResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'name' => $this->name,
             'city_id' => $this->city_id,
-            'city' => $this->city->name,
+            'city' => new CityResource($this->city),
             'region' => $this->city->region->name,
             'director_id' => $this->user_id,
             'director' => $this->director->full_name,
-            'name' => $this->name,
             'address' => $this->address,
             'kpi_day_plan' => $this->kpi_day_plan,
             'kpi_month_plan' => $this->kpi_month_plan,
