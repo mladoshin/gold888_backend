@@ -151,10 +151,32 @@ class ReportController extends Controller
 
     public function incomeCity()
     {
-        $report =Report::all();
-
-
-        return CityReportsResource::collection($report);
+        $reports =Report::orderBy('city_id')->get();
+        if(count($reports)==0)  return response()->json([
+            'success' => false,
+            'data' => null
+        ]);
+        $res = [];
+        foreach ($reports as $report) {
+            $cityId = $report->city->id;
+            if (isset($res[$cityId])) {
+                $res[$cityId]['income'] += $report->calculateIncome();
+                $res[$cityId]['expenses'] += $report->calculateExpenses();
+                $res[$cityId]['total'] += $report->getNetProfitAttribute();
+            } else {
+                $res[$cityId] = [
+                    'city_id' => $cityId,
+                    'city_name' => $report->city->name,
+                    'income' => $report->calculateIncome(),
+                    'expenses' => $report->calculateExpenses(),
+                    'total' => $report->getNetProfitAttribute(),
+                ];
+            }
+        }
+        return response()->json([
+            'success' => true,
+            'data' => $res
+        ]);
     }
 
     public function getLastReport(Request $request)

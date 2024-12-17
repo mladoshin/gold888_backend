@@ -84,7 +84,7 @@ class OverdueController extends Controller
         }
 
         if ($request->filled('branch_id')) {
-            $query->where('branch_id', $request->filled('branch_id'));
+            $query->where('branch_id', $request->input('branch_id'));
         }
 
         if ($request->filled('city_id')) {
