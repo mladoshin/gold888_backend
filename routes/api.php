@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::get('reports/income-city',[ReportController::class, 'incomeCity']);
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     $user =  \App\Models\User::with(['branch:id,name', 'branches:id,name'])->find($request->user()->id);
     return new \App\Http\Resources\UserResource($user);
@@ -35,6 +35,7 @@ Route::prefix('overdue')->name('overdue.')->group(function() {
     Route::get('list', [\App\Http\Controllers\Api\OverdueController::class, 'list'])->name('list');
     Route::get('item/{id}', [\App\Http\Controllers\Api\OverdueController::class, 'item'])->name('item');
     Route::delete('del/{id}', [\App\Http\Controllers\Api\OverdueController::class, 'del'])->name('del');
+    Route::get('total-number-overdue', [\App\Http\Controllers\Api\OverdueController::class, 'totalNumberOverdue']);
 
 });
 
@@ -51,6 +52,8 @@ Route::middleware('auth:sanctum')->group(function (){
 
 
     //reports
+    Route::get('reports/analytics-date',[ReportController::class, 'analyticsDate']);
+    Route::get('reports/amount-used-collateral-goods',[ReportController::class, 'amountUsedCollateralGoods']);
     Route::get('reports/income-city',[ReportController::class, 'incomeCity']);
     Route::get('reports/last',[ReportController::class, 'getLastReport']);
     Route::get('reports/statistics',[ReportController::class, 'statistics']);

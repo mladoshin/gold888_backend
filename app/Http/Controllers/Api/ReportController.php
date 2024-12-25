@@ -9,10 +9,12 @@ use App\Http\Resources\CityReportsResource;
 use App\Http\Resources\ReportTableResource;
 use App\Models\Branch;
 use App\Models\Report;
+use App\Service\ReportService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use function PHPUnit\Framework\isEmpty;
 
 class ReportController extends Controller
@@ -179,6 +181,64 @@ class ReportController extends Controller
         ]);
     }
 
+    public function analyticsDate(Request $request)
+    {
+        try {
+            $service = ReportService::validation($request);
+            $periodFormat =$service['periodFormat'];
+            $query =$service['query'];
+            $reports =$query->get();
+            $currentDate = '';
+            $tmpRes = [];
+            $res = [];
+            foreach ($reports as $report) {
+                if($currentDate == Carbon::make($report->created_at)->format($periodFormat)){
+                    $tmpRes['income'] += $report->calculateIncome();
+                    $tmpRes['expenses'] += $report->calculateExpenses();
+                    $tmpRes['total'] += $report->getNetProfitAttribute();
+                    $tmpRes['selling_goods'] +=  $report->selling_goods ?? 0;
+                } else {
+                    if  ($currentDate != '') $res[$currentDate] = $tmpRes;
+                    $currentDate = Carbon::make($report->created_at)->format($periodFormat);
+                    $tmpRes = [
+                        'income'=> $report->calculateIncome(),
+                        'expenses'=> $report->calculateExpenses(),
+                        'total' => $report->getNetProfitAttribute(),
+                        'selling_goods' => $report->selling_goods
+                    ];
+                }
+            }
+            return response()->json([
+                'success' => 'ok',
+                'data' => $res
+            ]);
+        }catch (\Exception $e){
+            return $e->getMessage();
+        }
+    }
+    public function amountUsedCollateralGoods(Request $request)
+    {
+        try {
+            $query = ReportService::validation($request)['query'];
+            $reports =$query->get();
+            $res = [
+                'used_goods' =>0,
+                'deposit_tickets'=>0
+
+            ];
+            foreach ($reports as $report) {
+                $res['used_goods'] += $report->used_goods ?? 0;
+                $res['deposit_tickets'] += $report->deposit_tickets ?? 0;
+            }
+            return response()->json([
+                'success' => 'ok',
+                'data' => $res
+            ]);
+        }catch (\Exception $e){
+            return $e->getMessage();
+        }
+    }
+
     public function getLastReport(Request $request)
     {
         $branchId = $request->query('branch_id');
@@ -260,5 +320,6 @@ class ReportController extends Controller
             #->selectRaw('DATE(created_at) as date, SUM(net_profit) as total_price')
             ->get();
         return response()->json($reports);
+
     }
 }

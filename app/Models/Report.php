@@ -79,12 +79,12 @@ class Report extends Model
 
     public function city(): BelongsTo
     {
-        return $this->belongsTo(City::class, 'city_id');
+        return $this->branch->city();
     }
 
     public function branch(): BelongsTo
     {
-        return $this->belongsTo(Branch::class, 'branch_id')->withDefault(['name' => 'this branch deleted']);
+        return $this->belongsTo(Branch::class, 'branch_id');
     }
 
     public function getCreatedAtAttribute($value)

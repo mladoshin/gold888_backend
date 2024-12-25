@@ -29,5 +29,23 @@
 
 api/reports/income-city\ 
 
+/api/reports/analytics-date [
+'city_id'=>'nullable|integer',
+'branch_id'=>'nullable|integer',
+'period' => 'nullable|string|in:last_month,last_six_months,last_year',
+]
+
+/api/reports/amount-used-collateral-goods[
+'city_id'=>'nullable|integer',
+'branch_id'=>'nullable|integer',
+'period' => 'nullable|string|in:last_month,last_six_months,last_year',
+]
+
+/api/overdue/total-number-overdue[
+'city_id'=>'nullable|integer',
+'branch_id'=>'nullable|integer',
+'period' => 'nullable|string|in:last_month,last_six_months,last_year',
+]
+
 
                                              ]

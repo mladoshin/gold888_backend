@@ -8,6 +8,7 @@ use App\Models\Branch;
 use App\Models\Overdue;
 use App\Models\OverdueStatus;
 use App\Models\User;
+use App\Service\ReportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -157,4 +158,26 @@ class OverdueController extends Controller
             'message' => "The record is delete success",
         ], 200);
     }
+    public function totalNumberOverdue(Request $request)
+    {
+        try {
+            $query = ReportService::validation($request, Overdue::class)['query'];
+            $overdue =$query->get();
+            $amount = $overdue->sum('amount');
+            $returned = $overdue->sum('returned');
+            return response()->json([
+                'success' => 'ok',
+                'data' => [
+                    'count'=>count($overdue),
+                    'amount'=>$amount,
+                    'returned'=>$returned,
+                    'total'=>$amount-$returned,
+                ]
+            ]);
+        }catch (\Exception $e){
+            return $e->getMessage();
+        }
+    }
+
+
 }
