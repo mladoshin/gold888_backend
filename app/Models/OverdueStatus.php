@@ -6,7 +6,9 @@ class OverdueStatus
 {
     const TRANSFERRED_TO_A_LAWYER="Переданные юристу";
     const SUSPENDED="Приостановленные";
-    const WITHOUT_DOCUMENTS="Без документов";
+    const WITHOUT_DOCUMENTS="Дело у ЧСИ";
+    const TRANSFERRED_TO_NOTARY="Дело у нотариуса";
+
 
     public static function getStatusList(): array
     {
@@ -14,6 +16,7 @@ class OverdueStatus
             self::TRANSFERRED_TO_A_LAWYER,
             self::SUSPENDED,
             self::WITHOUT_DOCUMENTS,
+            self::TRANSFERRED_TO_NOTARY
         ];
     }
 }

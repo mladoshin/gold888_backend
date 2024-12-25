@@ -38,11 +38,9 @@ class OverdueController extends Controller
         }
     }
 
-    public function update(Request $request)
+    public function update(Request $request, string $id)
     {
-
         $validator = Validator::make($request->all(), [
-            'overdue_id'=> 'required|integer|exists:' . (new Overdue())->getTable() . ',id',
             'user' => 'required|string',
             'status' => 'string|in:' . implode(',', OverdueStatus::getStatusList()),
             'amount' => 'numeric|min:0',
@@ -58,7 +56,7 @@ class OverdueController extends Controller
         }
         try {
 
-            $item = Overdue::find($request->input('overdue_id'));
+            $item = Overdue::find($id);
             $item->update($request->except('overdue_id'));
             return new OverdueResource($item);
         }catch (\Exception $e){
