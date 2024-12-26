@@ -50,18 +50,20 @@ Route::middleware('auth:sanctum')->group(function (){
 
     Route::post('user/update-password', [UserController::class, 'updatePassword']);
 
+    Route::prefix('reports')->group(function() {
+        Route::get('/',[ReportController::class, 'index']);
+        Route::post('/',[ReportController::class, 'store']);
+        Route::get('analytics-date',[ReportController::class, 'analyticsDate']);
+        Route::get('amount-used-collateral-goods',[ReportController::class, 'amountUsedCollateralGoods']);
+        Route::get('income-city',[ReportController::class, 'incomeCity']);
+        Route::get('last',[ReportController::class, 'getLastReport']);
+        Route::get('statistics',[ReportController::class, 'statistics']);
+        Route::middleware('director')->group(function () {
+            Route::put('{id}',[ReportController::class, 'update']);
+            Route::delete('{id}',[ReportController::class, 'destroy']);
+        });
 
-    //reports
-    Route::get('reports/analytics-date',[ReportController::class, 'analyticsDate']);
-    Route::get('reports/amount-used-collateral-goods',[ReportController::class, 'amountUsedCollateralGoods']);
-    Route::get('reports/income-city',[ReportController::class, 'incomeCity']);
-    Route::get('reports/last',[ReportController::class, 'getLastReport']);
-    Route::get('reports/statistics',[ReportController::class, 'statistics']);
-    Route::middleware('director')->group(function () {
-        Route::put('reports/{id}',[ReportController::class, 'update']);
-        Route::delete('reports/{id}',[ReportController::class, 'destroy']);
     });
-    Route::apiResource('reports',ReportController::class);
 
 
     Route::post('auth/logout', [AuthController::class, 'logout']);
