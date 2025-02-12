@@ -30,11 +30,11 @@ Route::get('roles', function (){
 });
 Route::prefix('overdue')->name('overdue.')->group(function() {
     Route::post('create', [\App\Http\Controllers\Api\OverdueController::class, 'create'])->name('create');
-    Route::put('update', [\App\Http\Controllers\Api\OverdueController::class, 'update'])->name('update');
+    Route::put('item/{id}', [\App\Http\Controllers\Api\OverdueController::class, 'update'])->name('update');
     Route::get('status-list', [\App\Http\Controllers\Api\OverdueController::class, 'statusList'])->name('statusList');
     Route::get('list', [\App\Http\Controllers\Api\OverdueController::class, 'list'])->name('list');
     Route::get('item/{id}', [\App\Http\Controllers\Api\OverdueController::class, 'item'])->name('item');
-    Route::delete('del/{id}', [\App\Http\Controllers\Api\OverdueController::class, 'del'])->name('del');
+    Route::delete('item/{id}', [\App\Http\Controllers\Api\OverdueController::class, 'del'])->name('del');
     Route::get('total-number-overdue', [\App\Http\Controllers\Api\OverdueController::class, 'totalNumberOverdue']);
 
 });
