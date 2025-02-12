@@ -10,8 +10,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Report extends Model
 {
+    protected $casts = [
+        'interest_income' => 'float',
+        'income_goods' => 'float',
+        'smart_interest_income' => 'float',
+        'smart_income_goods' => 'float',
+    ];
     protected $fillable = [
-        'city_id',
         'branch_id',
         'user_id',
         'date',
@@ -79,12 +84,12 @@ class Report extends Model
 
     public function city(): BelongsTo
     {
-        return $this->belongsTo(City::class, 'city_id');
+        return $this->branch->city();
     }
 
     public function branch(): BelongsTo
     {
-        return $this->belongsTo(Branch::class, 'branch_id')->withDefault(['name' => 'this branch deleted']);
+        return $this->belongsTo(Branch::class, 'branch_id');
     }
 
     public function getCreatedAtAttribute($value)
@@ -128,10 +133,13 @@ class Report extends Model
 
     public function calculateIncome(): float
     {
-        return $this->attributes['interest_income'] +
-            $this->attributes['income_goods'] +
-            $this->attributes['smart_interest_income'] +
-            $this->attributes['smart_income_goods'];
+        $interestIncome = $this->attributes['interest_income'] ?? 0;
+        $incomeGoods = $this->attributes['income_goods'] ?? 0;
+        $smartInterestIncome = $this->attributes['smart_interest_income'] ?? 0;
+        $smartIncomeGoods = $this->attributes['smart_income_goods'] ?? 0;
+
+        return (float)$interestIncome + (float)$incomeGoods + (float)$smartInterestIncome + (float)$smartIncomeGoods;
+
     }
 
     public function calculateExpenses(): float
@@ -144,12 +152,13 @@ class Report extends Model
         return $this->calculateIncome() - $this->calculateExpenses();
     }
 
-    public static function boot(): void
-    {
-        parent::boot();
-        static::saving(function($item) {
-            $item->user_id = request()->user()->id;
-        });
-    }
+//    public static function boot(): void
+//    {
+//        parent::boot();
+//        static::saving(function($item) {
+//            if (!$item->interest_income)
+//            $item->user_id = request()->user()->id;
+//        });
+//    }
 
 }

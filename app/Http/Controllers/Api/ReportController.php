@@ -9,10 +9,13 @@ use App\Http\Resources\CityReportsResource;
 use App\Http\Resources\ReportTableResource;
 use App\Models\Branch;
 use App\Models\Report;
+use App\Service\ReportService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use function PHPUnit\Framework\isEmpty;
 
 class ReportController extends Controller
@@ -34,7 +37,7 @@ class ReportController extends Controller
             $reports->whereIn('branch_id', $branchIds);
         }
 
-        $reports = $reports->select('id', 'user_id', 'branch_id', 'city_id', 'date', 'income_goods', 'smart_income_goods', 'own_capital', 'smart_own_capital', 'equity', 'smart_equity', 'interest_income', 'smart_interest_income', 'created_at', 'start_shift', 'smart_start_shift', 'end_shift', 'smart_end_shift', 'deposit_tickets', 'smart_deposit_tickets', DB::raw("(SELECT name FROM branches WHERE branch_id = branches.id) as branch_name"))
+        $reports = $reports->select('id', 'user_id', 'branch_id',  'date', 'income_goods', 'smart_income_goods', 'own_capital', 'smart_own_capital', 'equity', 'smart_equity', 'interest_income', 'smart_interest_income', 'created_at', 'start_shift', 'smart_start_shift', 'end_shift', 'smart_end_shift', 'deposit_tickets', 'smart_deposit_tickets', DB::raw("(SELECT name FROM branches WHERE branch_id = branches.id) as branch_name"))
             ->orderBy('date', 'desc')
             ->withSum('consumptions', 'sum')
             ->when($key, function ($q) use ($key) {
@@ -43,7 +46,8 @@ class ReportController extends Controller
                     ->orWhere('income_goods', 'like', '%' . $key . '%');
             })
             ->when($cityId, function ($q) use ($cityId) {
-                $q->where('city_id', $cityId);
+                $branchIds = Branch::where('city_id', $cityId)->pluck('id');
+                $q->whereIn('branch_id', $branchIds);
             })
             ->when($branchId, function ($q) use ($branchId) {
                 $q->where('branch_id', $branchId);
@@ -84,20 +88,20 @@ class ReportController extends Controller
 
     public function store(StoreReportRequest $request)
     {
-        \DB::beginTransaction();
-        $data = $request->all();
-        $data['city_id'] = Branch::find($request->branch_id)->city_id;
+        $data = array_merge(
+            array_fill_keys(array_keys($request->rules()), null),
+            $request->validated()
+        );
+        $data['user_id'] = Auth::id();
         try {
             $report = Report::create($data);
-            $report->consumptions()->createMany($request->smart_consumptions ?? []);
-            $report->consumptions()->createMany($request->express_consumptions ?? []);
-            \DB::commit();
+            if(isset($request->smart_consumptions))  $report->consumptions()->createMany($request->smart_consumptions ?? []);
+            if(isset($request->express_consumptions)) $report->consumptions()->createMany($request->express_consumptions ?? []);
             return response()->json([
                 'success' => true,
-                'data' => []
+                'data' => $report
             ]);
         } catch (\Exception $e) {
-            \DB::rollBack();
             return response()->json([
                 'success' => false,
                 'data' => ['error' => $e->getMessage()]
@@ -118,40 +122,42 @@ class ReportController extends Controller
         ]);
     }
 
-    public function update(Request $request, int $reportId)
+    public function update(StoreReportRequest $request, int $reportId)
     {
-        \DB::beginTransaction();
-        $data = $request->all();
-        $data['city_id'] = Branch::find($request->branch_id)->city_id;
+        $data = array_merge(
+            array_fill_keys(array_keys($request->rules()), null),
+            $request->validated()
+        );
+        $data['user_id'] = Auth::id();
         try {
             $report = Report::find($reportId);
             $report->update($data);
             $report->consumptions()->delete();
             $report->consumptions()->createMany($request->smart_consumptions ?? []);
             $report->consumptions()->createMany($request->express_consumptions ?? []);
-            \DB::commit();
             return response()->json([
                 'success' => true,
-                'data' => []
+                'data' => $report
             ]);
         } catch (\Exception $e) {
-            \DB::rollBack();
             return response()->json([
                 'success' => false,
                 'data' => ['error' => $e->getMessage()]
             ]);
         }
-        return response()->json($data);
+
     }
 
     public function destroy(int $reportId)
     {
-        return Report::where('id', $reportId)->delete();
+        $report = Report::find($reportId);
+        $report->consumptions()->delete();
+        return $report->delete();
     }
 
     public function incomeCity()
     {
-        $reports =Report::orderBy('city_id')->get();
+        $reports =Report::get();
         if(count($reports)==0)  return response()->json([
             'success' => false,
             'data' => null
@@ -179,6 +185,74 @@ class ReportController extends Controller
         ]);
     }
 
+    public function analyticsDate(Request $request)
+    {
+        try {
+            $service = ReportService::validation($request);
+            $periodFormat =$service['periodFormat'];
+            $query =$service['query'];
+            $reports =$query->get();
+            if (count($reports)==0) return response()->json([
+                'success' => 'ok',
+                'data' => []
+            ]);
+            $currentDate =  Carbon::make($reports[0]->created_at)->format($periodFormat);
+            $tmpRes = ['income'=> 0, 'expenses'=> 0, 'total' => 0, 'selling_goods' => 0, 'fixed_flow'=>0 ];
+            $res = [];
+
+            foreach ($reports as $report) {
+                if($currentDate == Carbon::make($report->created_at)->format($periodFormat)){
+                    $tmpRes['income'] += $report->calculateIncome();
+                    $tmpRes['expenses'] += $report->calculateExpenses();
+                    $tmpRes['total'] += $report->getNetProfitAttribute();
+                    $tmpRes['selling_goods'] +=  $report->selling_goods ?? 0;
+                    $tmpRes['fixed_flow'] +=  $report->fixed_flow ?? 0;
+                } else {
+                    $res[$currentDate] = $tmpRes;
+                    $currentDate = Carbon::make($report->created_at)->format($periodFormat);
+                    $tmpRes = [
+                        'income'=> $report->calculateIncome(),
+                        'expenses'=> $report->calculateExpenses(),
+                        'total' => $report->getNetProfitAttribute(),
+                        'selling_goods' => $report->selling_goods ?? 0,
+                        'fixed_flow' => $report->fixed_flow ?? 0
+                    ];
+                }
+            }
+            if(count($res)!==count($tmpRes)) $res = $tmpRes;
+            return response()->json([
+                'success' => 'ok',
+                'data' => $res
+            ]);
+        }catch (\Exception $e){
+            return $e->getMessage();
+        }
+    }
+    public function amountUsedCollateralGoods(Request $request)
+    {
+        try {
+            $query = ReportService::validation($request)['query'];
+            $reports =$query->get();
+            $res = [
+                'used_goods' =>0,
+                'deposit_tickets'=>0,
+                'selling_goods'=>0
+
+            ];
+            foreach ($reports as $report) {
+                $res['used_goods'] += $report->used_goods ?? 0;
+                $res['deposit_tickets'] += $report->deposit_tickets ?? 0;
+                $res['selling_goods'] += $report->selling_goods ?? 0;
+            }
+            return response()->json([
+                'success' => 'ok',
+                'data' => $res
+            ]);
+        }catch (\Exception $e){
+            return $e->getMessage();
+        }
+    }
+
     public function getLastReport(Request $request)
     {
         $branchId = $request->query('branch_id');
@@ -189,11 +263,7 @@ class ReportController extends Controller
         if ($branchId) {
 
             $now = !$date ? Carbon::now() : Carbon::parse($date);
-
-            // Первый день текущего месяца
             $firstDayOfMonth = $now->copy()->startOfMonth();
-
-            // Последний день текущего месяца
             $lastDayOfMonth = $now->copy()->endOfMonth();
 
             $item = $selectQuery
@@ -220,8 +290,6 @@ class ReportController extends Controller
 
     public function statistics(Request $request)
     {
-        //return Report::whereDate('date', '2024-10-26')->get();
-
         $reports = DB::table('reports')
             ->leftJoin('consumptions', 'consumptions.report_id', '=', 'reports.id')
             ->selectRaw('
@@ -260,5 +328,6 @@ class ReportController extends Controller
             #->selectRaw('DATE(created_at) as date, SUM(net_profit) as total_price')
             ->get();
         return response()->json($reports);
+
     }
 }

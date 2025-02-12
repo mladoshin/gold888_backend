@@ -8,6 +8,7 @@ use App\Models\Branch;
 use App\Models\Overdue;
 use App\Models\OverdueStatus;
 use App\Models\User;
+use App\Service\ReportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -38,9 +39,10 @@ class OverdueController extends Controller
         }
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, int $id)
     {
         $validator = Validator::make($request->all(), [
+            //'overdue_id'=> 'required|integer|exists:' . (new Overdue())->getTable() . ',id',
             'user' => 'required|string',
             'status' => 'string|in:' . implode(',', OverdueStatus::getStatusList()),
             'amount' => 'numeric|min:0',
@@ -57,7 +59,7 @@ class OverdueController extends Controller
         try {
 
             $item = Overdue::find($id);
-            $item->update($request->except('overdue_id'));
+            $item->update($request->all());
             return new OverdueResource($item);
         }catch (\Exception $e){
             return $e->getMessage();
@@ -155,4 +157,26 @@ class OverdueController extends Controller
             'message' => "The record is delete success",
         ], 200);
     }
+    public function totalNumberOverdue(Request $request)
+    {
+        try {
+            $query = ReportService::validation($request, Overdue::class)['query'];
+            $overdue =$query->get();
+            $amount = $overdue->sum('amount');
+            $returned = $overdue->sum('returned');
+            return response()->json([
+                'success' => 'ok',
+                'data' => [
+                    'count'=>count($overdue),
+                    'amount'=>$amount,
+                    'returned'=>$returned,
+                    'total'=>$amount-$returned,
+                ]
+            ]);
+        }catch (\Exception $e){
+            return $e->getMessage();
+        }
+    }
+
+
 }
