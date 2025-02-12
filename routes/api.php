@@ -51,8 +51,7 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::post('user/update-password', [UserController::class, 'updatePassword']);
 
     Route::prefix('reports')->group(function() {
-        Route::get('/',[ReportController::class, 'index']);
-        Route::post('/',[ReportController::class, 'store']);
+
         Route::get('analytics-date',[ReportController::class, 'analyticsDate']);
         Route::get('amount-used-collateral-goods',[ReportController::class, 'amountUsedCollateralGoods']);
         Route::get('income-city',[ReportController::class, 'incomeCity']);
@@ -62,7 +61,10 @@ Route::middleware('auth:sanctum')->group(function (){
             Route::put('{id}',[ReportController::class, 'update']);
             Route::delete('{id}',[ReportController::class, 'destroy']);
         });
+        Route::get('/{id}',[ReportController::class, 'show']);
+        Route::get('/',[ReportController::class, 'index']);
 
+        Route::post('/',[ReportController::class, 'store']);
     });
 
 
