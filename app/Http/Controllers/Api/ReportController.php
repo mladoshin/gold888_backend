@@ -109,13 +109,19 @@ class ReportController extends Controller
         }
     }
 
-    public function show(Report $report)
+    public function show($id)
     {
         $report = Report::withSum('consumptions', 'sum')
             ->with('branch:id,name')
-            ->find($report->id);
-        $smartConsumptions = $report->consumptions()->where('report_type', 'smart')->get();
-        $expressConsumptions = $report->consumptions()->where('report_type', 'express')->get();
+            ->find($id);
+        if(!$report) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "This record not found",
+            ], 404);
+        }
+        $smartConsumptions = $report->consumptions() !== null ? $report->consumptions()->where('report_type', 'smart')->get() : [];
+        $expressConsumptions = $report->consumptions() !== null ? $report->consumptions()->where('report_type', 'express')->get() : [];
         return response()->json([
             'success' => true,
             'data' => ['report' => $report, 'smartConsumptions' => $smartConsumptions, 'expressConsumptions' => $expressConsumptions]
@@ -150,9 +156,27 @@ class ReportController extends Controller
 
     public function destroy(int $reportId)
     {
-        $report = Report::find($reportId);
-        $report->consumptions()->delete();
-        return $report->delete();
+
+        try {
+            $report = Report::find($reportId);
+            if(!$report) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => "This record not found",
+                ], 404);
+            }
+            if($report->consumptions() !== null)  $report->consumptions()->delete();
+            $report->delete();
+            return response()->json([
+                'success' => true,
+                'msg' => 'This record was deleted'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'data' => ['error' => $e->getMessage()]
+            ]);
+        }
     }
 
     public function incomeCity()
@@ -219,7 +243,9 @@ class ReportController extends Controller
                     ];
                 }
             }
-            if(count($res)!==count($tmpRes)) $res = $tmpRes;
+            if(count($res) == 0 && count($res)!==count($tmpRes)) {
+                $res[$currentDate] = $tmpRes;
+            }
             return response()->json([
                 'success' => 'ok',
                 'data' => $res

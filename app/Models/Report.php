@@ -103,17 +103,24 @@ class Report extends Model
 
     public function getSumEquityAttribute()
     {
-        return $this->attributes['equity'] + $this->attributes['smart_equity'];
+        $equity = $this->attributes['equity'] ?? 0;
+        $smart_equity = $this->attributes['smart_equity'] ?? 0;
+        return (float)$equity + (float)$smart_equity;
     }
 
     public function getSumOwnCapitalAttribute()
     {
-        return $this->attributes['own_capital'] + $this->attributes['smart_own_capital'];
+        $own_capital = $this->attributes['own_capital'] ?? 0;
+        $smart_own_capital = $this->attributes['smart_own_capital'] ?? 0;
+        return (float)$own_capital + (float)$smart_own_capital;
     }
 
     public function getSumStartShiftAttribute()
     {
-        return $this->attributes['start_shift'] + $this->attributes['smart_start_shift'];
+        $start_shift = $this->attributes['start_shift'] ?? 0;
+        $smart_start_shift = $this->attributes['smart_start_shift'] ?? 0;
+
+        return (float)$start_shift +  (float)$smart_start_shift;
     }
 
     public function getSumEndShiftAttribute()
@@ -123,7 +130,9 @@ class Report extends Model
 
     public function getSumIncomeGoodsAttribute()
     {
-        return $this->attributes['income_goods'] + $this->attributes['smart_income_goods'];
+        $income_goods = $this->attributes['income_goods'] ?? 0;
+        $smart_income_goods = $this->attributes['smart_income_goods'] ?? 0;
+        return (float)$income_goods + (float)$smart_income_goods;
     }
 
     public function getSumDepositTicketsAttribute()
@@ -152,13 +161,6 @@ class Report extends Model
         return $this->calculateIncome() - $this->calculateExpenses();
     }
 
-//    public static function boot(): void
-//    {
-//        parent::boot();
-//        static::saving(function($item) {
-//            if (!$item->interest_income)
-//            $item->user_id = request()->user()->id;
-//        });
-//    }
+
 
 }
